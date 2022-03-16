@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Главная страница | FG{% endblock %}
+{% block header %}Последние клиенты на сайте{% endblock %}
+{% block content %}
+
+    {% for client in clients %}
+    <h3>
+        Полное имя: {{ client.full_name }}, цель диеты - {{ client.type_diet }}
+    </h3>
+    <p>
+        Пол - {{ client.sex }}, спорта в неделю {{ sport_on_week }}, дней в неделю без соблюдения диеты {{ no_eats_days_per_week }}, приемов пищи в день {{ eats_per_day }}
+    </p>
+    <hr>
+    {% endfor %}
+
+{% endblock %}
+
+
+        
