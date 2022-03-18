@@ -15,3 +15,28 @@ class Client(models.Model):
     eats_per_day = models.SmallIntegerField()
     phone_number = models.TextField()
     type_diet = models.TextField()
+    
+
+class Menu(models.Model):
+    comments = models.TextField()
+
+
+class Day(models.Model):
+    comments = models.TextField()
+    
+
+class Meal(models.Model):
+    comments = models.TextField()
+    
+
+class Product(models.Model):
+    calories = models.SmallIntegerField()
+    proteins = models.SmallIntegerField()
+    fats = models.SmallIntegerField()
+    carbohydrates = models.SmallIntegerField()
+    
+    
+class Measure_scale(models.Model):
+    name = models.TextField()
+    shortname = models.TextField()
+    
