@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-# Create your models here.
-
 User = get_user_model()
+
+# This block contains models in which there are no foreign keys
 
 class Client(models.Model):
     full_name = models.TextField()
@@ -18,15 +18,15 @@ class Client(models.Model):
     
 
 class Menu(models.Model):
-    comments = models.TextField()
+    comments = models.TextField(blank=True)
 
 
 class Day(models.Model):
-    comments = models.TextField()
+    comments = models.TextField(blank=True)
     
 
 class Meal(models.Model):
-    comments = models.TextField()
+    comments = models.TextField(blank=True)
     
 
 class Product(models.Model):
@@ -40,3 +40,12 @@ class Measure_scale(models.Model):
     name = models.TextField()
     shortname = models.TextField()
     
+
+# This block contains models that have a primary key and a foreign key
+
+class Template(models.Model):
+    poll = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    type_diet = models.CharField(max_length=20)
+    comments = models.TextField(blank=True)
+    
+# This block contains models in which the composite primary key
