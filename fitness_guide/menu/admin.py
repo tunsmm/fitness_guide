@@ -4,6 +4,7 @@ from django.contrib import admin
 
 from .models import Client
 
+
 class ClientAdmin(admin.ModelAdmin):
     list_display = ("pk", "full_name", "sex", "type_diet", "sport_on_week", "no_eats_days_per_week", "eats_per_day")
     search_fields = ("type_diet", "sex",)
@@ -12,4 +13,3 @@ class ClientAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Client, ClientAdmin)
-
