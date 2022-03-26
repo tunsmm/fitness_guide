@@ -13,4 +13,12 @@
     <hr>
     {% endfor %}
 
+    <a href="{% url 'password_change' %}">Лейбл сгенерировать меню</a>
+
+    <form action="{% url 'generate_menu' %}">
+        <button class="btn btn-primary">
+            Кнопка сгенерировать меню
+        </button>
+    </form>
+
 {% endblock %}

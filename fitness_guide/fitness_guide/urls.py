@@ -17,8 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("", include("menu.urls")), # main page
-    path('admin/', admin.site.urls), # admin section
-    path("auth/", include("users.urls")), # registration and autorization
-    path("auth/", include("django.contrib.auth.urls")), # if in users.urls don't exist this template
+    path("", include("menu.urls")),  # main page
+    path('admin/', admin.site.urls),  # admin section
+    path("auth/", include("users.urls")),  # registration and autorization
+    path("auth/", include("django.contrib.auth.urls")),  # if in users.urls don't exist this template
 ]
