@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
 from .models import Client
+from .forms import ClientForm
 
 
 @login_required
@@ -10,5 +11,20 @@ def index(request):
     return render(request, "index.html", {"clients": latest})
 
 
-def generate_menu(request):
-    return render(request, "generate_menu.html")
+def generateMenu(request):
+    error = ''
+    if request.method == 'POST':
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+        else:
+            error = 'Форма была неверной'
+            
+    
+    form_class = ClientForm
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "generate_menu.html", data)

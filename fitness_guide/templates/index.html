@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Главная страница | FG{% endblock %}
+{% block title %}Главная страница{% endblock %}
 {% block header %}Последние клиенты на сайте{% endblock %}
 {% block content %}
 
@@ -8,16 +8,24 @@
         Полное имя: {{ client.full_name }}, цель диеты - {{ client.type_diet }}
     </h3>
     <p>
-        Пол - {{ client.sex }}, спорта в неделю {{ sport_on_week }}, дней в неделю без соблюдения диеты {{ no_eats_days_per_week }}, приемов пищи в день {{ eats_per_day }}
+        
+        Пол - 
+        {% if client.sex %}
+        Мужчина
+        {% else %}
+        Женщина
+        {% endif %}
+        <br>
+        Cпорта в неделю - {{ client.sport_on_week }} <br>
+        Дней в неделю без соблюдения диеты {{ client.no_eats_days_per_week }} <br>
+        Приемов пищи в день {{ client.eats_per_day }}
     </p>
     <hr>
     {% endfor %}
 
-    <a href="{% url 'password_change' %}">Лейбл сгенерировать меню</a>
-
     <form action="{% url 'generate_menu' %}">
         <button class="btn btn-primary">
-            Кнопка сгенерировать меню
+            Добавить клиента
         </button>
     </form>
 

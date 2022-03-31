@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("menu", views.generate_menu, name="generate_menu")
+    # path("menu", views.generate_menu, name="generate_menu")
+    path("menu", views.generateMenu, name="generate_menu"),
 ]

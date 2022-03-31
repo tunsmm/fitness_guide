@@ -4,7 +4,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 User = get_user_model()
 
-# This block contains models in which there are no foreign keys
 
 class Client(models.Model):
     full_name = models.TextField()
