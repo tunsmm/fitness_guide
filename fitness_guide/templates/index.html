@@ -18,12 +18,14 @@
         <br>
         Cпорта в неделю - {{ client.sport_on_week }} <br>
         Дней в неделю без соблюдения диеты {{ client.no_eats_days_per_week }} <br>
-        Приемов пищи в день {{ client.eats_per_day }}
+        Приемов пищи в день {{ client.eats_per_day }} <br>
     </p>
+    <a href="{% url 'client-detail' client.id %}" class="link-secondary" >Читать детальнее</a>
     <hr>
     {% endfor %}
 
-    <form action="{% url 'generate_menu' %}">
+    <form action="{% url 'add_new_client' %}">
+        <br>
         <button class="btn btn-primary">
             Добавить клиента
         </button>

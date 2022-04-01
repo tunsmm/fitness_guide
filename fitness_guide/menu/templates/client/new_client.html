@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Генерация меню | FG{% endblock %}
+{% block title %}Добавление нового клиента{% endblock %}
 {% block header %}Введите параметры клиента{% endblock %}
 {% block content %}
 
     <p>
-        Some information
+        На этой странице вы можете добавить данные о новом клиенте для дальнейшего использования.
     </p>
     <div class="row justify-content-center">
         <div class="col-md-8 p-5">
             <div class="card">
-                <div class="card-header">Зарегистрироваться</div>
+                <div class="card-header">Форма добавления клиента</div>
                 <div class="card-body">
 
                     {% for error in form.errors %}
@@ -38,7 +38,7 @@
     
                         <div class="col-md-6 offset-md-4">              
                                 <button type="submit" class="btn btn-primary">
-                                    Сгенерировать меню
+                                    Добавить клиента
                                 </button>
                         </div>
                     </form>

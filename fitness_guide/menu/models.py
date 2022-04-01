@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -15,6 +16,17 @@ class Client(models.Model):
     eats_per_day = models.SmallIntegerField()
     phone_number = models.TextField()
     type_diet = models.TextField()
+    
+    class Meta:
+        verbose_name = 'Клиент'
+        verbose_name_plural = 'Клиенты'
+    
+    def __str__(self):
+        return self.full_name
+    
+    def get_absolute_url(self):
+        return f"/client/{self.id}"
+    
     
 
 class Menu(models.Model):
