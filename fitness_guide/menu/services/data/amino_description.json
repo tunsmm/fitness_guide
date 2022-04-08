@@ -1,0 +1,1 @@
+{"matrix_cols": ["weight_X", "sport_a_week_X", "AMINO_Y"], "samples": 200, "noise_factor": 1.1, "weights": [10, 50], "sports": [0, 5]}

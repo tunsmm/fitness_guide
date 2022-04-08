@@ -1,0 +1,1 @@
+{"matrix_cols": ["sex_X", "weight_X", "height_X", "age_X", "sport_a_week_X", "CALORIA_Y"], "samples": 200, "noise_factor": 1.1, "weights": [10, 50], "heights": [160, 200], "ages": [16, 45], "sports": [0, 5]}
