@@ -1,34 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Главная страница{% endblock %}
-{% block header %}Последние клиенты на сайте{% endblock %}
+{% block header %}Главная страница на сайте{% endblock %}
 {% block content %}
-
-    {% for client in clients %}
     <h3>
-        Полное имя: {{ client.full_name }}, цель диеты - {{ client.type_diet }}
+        Здесь вы можете выбрать нужный раздел сайта
     </h3>
-    <p>
-        
-        Пол - 
-        {% if client.sex %}
-        Мужчина
-        {% else %}
-        Женщина
-        {% endif %}
-        <br>
-        Cпорта в неделю - {{ client.sport_on_week }} <br>
-        Дней в неделю без соблюдения диеты {{ client.no_eats_days_per_week }} <br>
-        Приемов пищи в день {{ client.eats_per_day }} <br>
-    </p>
-    <a href="{% url 'client-detail' client.id %}" class="link-secondary" >Читать детальнее</a>
-    <hr>
-    {% endfor %}
 
-    <form action="{% url 'add_new_client' %}">
-        <br>
-        <button class="btn btn-primary">
-            Добавить клиента
-        </button>
-    </form>
+    <a href="{% url 'client-main' %}" class="btn btn-primary btn-lg" >Просмотреть клиентов</a>
+    <a href="{% url 'product-main' %}" class="btn btn-primary btn-lg" >Просмотреть продукты</a>
 
 {% endblock %}

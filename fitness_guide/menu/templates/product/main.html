@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Страница продуктов{% endblock %}
+{% block header %}Последние добавленные продукты на сайте{% endblock %}
+{% block content %}
+
+    {% for product in products %}
+    <h3>
+        Наименование: {{ product.name }}
+    </h3>
+    <h4>
+        Характеристики продукта:
+    </h4>
+    <p>
+        Калории - {{ product.calories }} <br>
+        Белки - {{ product.proteins }} <br>
+        Жиры - {{ product.fats}} <br>
+        Углеводы - {{ product.carbohydrates }} <br>
+    </p>
+    <a href="{% url 'product-update' product.id %}" class="btn btn-warning">Изменить данные</a>
+    <a href="{% url 'product-delete' product.id %}" class="btn btn-danger">Удалить продукт</a>
+    <hr>
+    {% endfor %}
+
+    <form action="{% url 'add-new-product' %}">
+        <br>
+        <button class="btn btn-primary">
+            Добавить новый продукт
+        </button>
+    </form>
+
+{% endblock %}

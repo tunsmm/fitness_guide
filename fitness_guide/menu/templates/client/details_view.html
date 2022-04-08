@@ -30,17 +30,25 @@
     </p>
 
     <h4>
+        Информация о меню
+    </h4>
+    <p>
+        ...
+    </p>
+
+    <h4>
         Контактная информация
     </h4>
     <p>
         Номер телефона: {{ client.phone_number }}
     </p>
 
-    <a href="{% url 'client-update' client.id %}" class="btn btn-info">Изменить данные</a>
+    <a href="{% url 'client-update' client.id %}" class="btn btn-warning">Изменить данные</a>
     <a href="{% url 'client-delete' client.id %}" class="btn btn-danger">Удалить клиента</a>
+    <a href="{% url 'menu-generate' client.id %}" class="btn btn-success">Сгенерировать меню</a>
 
     <hr>
 
-    <a href="{% url 'index' %}" class="btn btn-primary">На главную</a>
+    <a href="{% url 'client-main' %}" class="btn btn-primary">На главную</a>
 
 {% endblock %}

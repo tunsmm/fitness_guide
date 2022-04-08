@@ -1,5 +1,5 @@
 from django.forms import ModelForm, TextInput, NumberInput
-from .models import Client
+from .models import Client, Product
 
 
 class ClientForm(ModelForm):
@@ -33,5 +33,29 @@ class ClientForm(ModelForm):
             }),
             "type_diet": TextInput(attrs={
                 'placeholder': 'health'
+            }),
+        }
+
+
+class ProductForm(ModelForm):
+    class Meta:
+        model = Product
+        fields = ("name", "calories", "proteins", "fats", "carbohydrates")
+
+        widgets = {
+            "name": TextInput(attrs={
+                'placeholder': 'Наименование продукта'
+            }),
+            "calories": NumberInput(attrs={
+                'placeholder': '100'
+            }),
+            "proteins": NumberInput(attrs={
+                'placeholder': '70'
+            }),
+            "fats": NumberInput(attrs={
+                'placeholder': '50'
+            }),
+            "carbohydrates": NumberInput(attrs={
+                'placeholder': '60'
             }),
         }

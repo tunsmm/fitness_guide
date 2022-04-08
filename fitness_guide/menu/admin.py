@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Client
+from .models import Client, Product
 
 
 class ClientAdmin(admin.ModelAdmin):
@@ -12,4 +12,12 @@ class ClientAdmin(admin.ModelAdmin):
     empty_value_display = "-пусто-"
 
 
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ("pk", "name", "calories", "proteins", "fats", "carbohydrates")
+    search_fields = ("name",)
+    list_filter = ("calories", )
+    empty_value_display = "-пусто-"
+
+
 admin.site.register(Client, ClientAdmin)
+admin.site.register(Product, ProductAdmin)
