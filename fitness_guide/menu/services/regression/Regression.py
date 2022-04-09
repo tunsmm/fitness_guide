@@ -113,26 +113,3 @@ class LinearRegression(Regression):
             raise ValueError(f"wrong: x{x.shape}, y{y.shape}: x(m,n), y(m,1)")
 
         return x, y
-
-
-class LinearRandom(LinearRegression):
-    def fit(self,
-            x: np.matrix,
-            y: np.matrix,
-            opti_obj: OL,
-            **kwargs: Any) -> Dict[str, list]:
-        x, y = self._perpare_xy(x, y)
-        self._weights = np.random.uniform(np.min(x), np.max(x), x.shape[1])
-        self._weights = np.matrix(self._weights.reshape(x.shape[1], 1))
-
-        loss = opti_obj.loss(self._weights, x, y)
-
-        fit_history = {
-            "i": [1],
-            "loss": [loss],
-            "delta_loss": [0.0],
-            "weights": [self._weights],
-            "lr": [0]
-        }
-
-        return fit_history

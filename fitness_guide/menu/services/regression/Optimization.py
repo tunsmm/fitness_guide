@@ -67,39 +67,6 @@ class Gradient(Linear):
         return w - g * lr
 
 
-class SGD(Gradient):
-    def __init__(self, lossObj: LG, **kwargs: Union[float, int]) -> None:
-        super().__init__(lossObj, **kwargs)
-        self._batch_size = int(kwargs.get("batch_size", 10))
-
-    def step(self,
-             w: np.matrix,
-             x: np.matrix,
-             y: np.matrix,
-             **kwargs: Any) -> np.matrix:
-        lr = kwargs.get("lr", 0.001)
-        w = self._prep_weights(w)
-        x, y = self._shuffle_xy(x, y)
-
-        for b in range(0, x.shape[0], self._batch_size):
-            x_batch = x[b:b + self._batch_size]
-            y_batch = y[b:b + self._batch_size]
-            g = self._gradient(w, x_batch, y_batch)
-            w = self._upd_weights(g, w, lr=lr)
-        return w, lr
-
-    def _shuffle_xy(self,
-                    x: np.matrix,
-                    y: np.matrix) -> Tuple[np.matrix, np.matrix]:
-        shuffled_x = np.empty(x.shape, dtype=x.dtype)
-        shuffled_y = np.empty(y.shape, dtype=y.dtype)
-        permutation = np.random.permutation(len(x))
-        for old_index, new_index in enumerate(permutation):
-            shuffled_x[new_index] = x[old_index]
-            shuffled_y[new_index] = y[old_index]
-        return shuffled_x, shuffled_y
-
-
 class MomentGrad(Gradient):
     def __init__(self, lossObj: LG, **kwargs: Any) -> None:
         super().__init__(lossObj, **kwargs)
