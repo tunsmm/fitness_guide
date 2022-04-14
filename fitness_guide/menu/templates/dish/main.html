@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Страница блюд{% endblock %}
+{% block header %}Последние добавленные блюда на сайте{% endblock %}
+{% block content %}
+
+    {% for dish in dishes %}
+    <h3>
+        Наименование: {{ dish.name }}
+    </h3>
+    <p>
+        Рецепт: {{ dish.recipe }} <br>
+        Комментарий: {{ dish.comments }}
+    </p>
+    <a href="{% url 'dish-detail' dish.id %}" class="btn btn-primary">Просмотреть блюдо</a>
+    <hr>
+    {% endfor %}
+
+    <form action="{% url 'add-new-dish' %}">
+        <br>
+        <button class="btn btn-primary">
+            Добавить новое блюдо
+        </button>
+    </form>
+
+{% endblock %}

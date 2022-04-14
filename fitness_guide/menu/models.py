@@ -46,23 +46,69 @@ class Product(models.Model):
     proteins = models.FloatField()
     fats = models.FloatField()
     carbohydrates = models.FloatField()
-    
+
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
 
     def __str__(self):
         return self.name
-    
+
     def get_absolute_url(self):
         return f"/product"
 
+
+class MeasureScale(models.Model):
+    name = models.CharField(max_length=255)
+    shortname = models.CharField(max_length=15)
+
+    class Meta:
+        verbose_name = 'Шкала измерения'
+        verbose_name_plural = 'Шкалы измерения'
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class MeasureScaleCourse(models.Model):
+    ms_from = models.IntegerField()
+    ms_to = models.IntegerField()
+    value = models.FloatField()
+
+    class Meta:
+        unique_together = (('ms_from', 'ms_to'),)
+        verbose_name = 'Курс шкал'
+        verbose_name_plural = 'Курсы шкал'
+
+
+class Dish(models.Model):
+    name = models.CharField(max_length=255, blank=True)
+    recipe = models.TextField(blank=True)
+    comments = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Блюдо'
+        verbose_name_plural = 'Блюда'
+        
+    def __str__(self):
+        return self.name
+
+
+class Ingredient(models.Model):
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    measure_scale = models.ForeignKey(MeasureScale, on_delete=models.CASCADE)
+    amount = models.FloatField()
+
+    class Meta:
+        unique_together = (('dish', 'product'),)
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
+    def __str__(self):
+        return f"{self.dish}-{self.product}"
+
 """
-
-class Measure_scale(models.Model):
-    name = models.TextField()
-    shortname = models.TextField()
-
 
 # This block contains models that have a primary key and a foreign key
 
@@ -100,16 +146,6 @@ class LovedProduct(models.Model):
     product = models.IntegerField()
     score = models.CharField(max_length=2, default=None)
 
-
-class Ingredients(models.Model):
-    class Meta:
-        unique_together = (('dish', 'product'),)
-
-    dish = models.IntegerField()
-    product = models.IntegerField()
-    ms = models.ForeignKey(Measure_scale, on_delete=models.CASCADE)
-
-
 class DishesOfMeal:
     class Meta:
         unique_together = (('meal', 'dish'),)
@@ -136,12 +172,4 @@ class DaysOfMenu:
     menu = models.IntegerField()
     comments = models.TextField(blank=True)
 
-
-class MSCourses:
-    class Meta:
-        unique_together = (('ms_from', 'ms_to'),)
-
-    ms_from = models.IntegerField()
-    ms_to = models.IntegerField()
-    value = models.IntegerField()
 """

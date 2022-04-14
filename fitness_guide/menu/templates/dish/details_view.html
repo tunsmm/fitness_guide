@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Подробнее о блюде{% endblock %}
+{% block header %}Блюдо с id {{ dish.id }}, {{ dish.name }}{% endblock %}
+{% block content %}
+
+    <p>
+        Рецепт: {{ dish.recipe }} <br>
+        Комментарий: {{ dish.comments }}
+    </p>
+    <hr>
+    <h3>Ингредиенты:</h3>
+    
+    {% for ingredient in ingredients %}
+    <ul class="list-group">
+        <li class="list-group-item">{{ ingredient.product }} - {{ ingredient.amount }} {{ ingredient.measure_scale.shortname }}</li>
+    </ul>
+    {% endfor %}
+    <br>
+
+    <a href="{% url 'dish-main' %}" class="btn btn-primary">На главную</a>
+
+{% endblock %}

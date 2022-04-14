@@ -1,13 +1,13 @@
 from django.forms import ModelForm, TextInput, NumberInput
-from .models import Client, Product
+from .models import Client, Dish, Product
 
 
 class ClientForm(ModelForm):
     class Meta:
         model = Client
-        fields = ("full_name", "sex", "height", "weight", 
-                  "sport_on_week", "no_eats_days_per_week", 
-                  "eats_per_day", "phone_number", "type_diet")
+        fields = ("full_name", "sex", "height", "weight",
+                  "sport_on_week", "no_eats_days_per_week",
+                  "eats_per_day", "phone_number", "type_diet", )
 
         widgets = {
             "full_name": TextInput(attrs={
@@ -33,6 +33,25 @@ class ClientForm(ModelForm):
             }),
             "type_diet": TextInput(attrs={
                 'placeholder': 'health'
+            }),
+        }
+
+
+class DishForm(ModelForm):
+    class Meta:
+        model = Dish
+        fields = ("name", "recipe", "comments", )
+
+        widgets = {
+            "name": TextInput(attrs={
+                'placeholder': 'Название блюда',
+                'required': False,
+            }),
+            "recipe": TextInput(attrs={
+                'placeholder': 'Алгоритм приготовления блюда заключается в следующем ... '
+            }),
+            "comments": TextInput(attrs={
+                'placeholder': 'Комментарии'
             }),
         }
 
