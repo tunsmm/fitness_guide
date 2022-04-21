@@ -1,10 +1,12 @@
-from multiprocessing.dummy import current_process
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.http.response import HttpResponseRedirect
 from django.views.generic import DetailView, UpdateView, DeleteView, ListView
+from django.urls import reverse_lazy
+
 
 from .models import Client, Dish, Ingredient, Ingredient, MeasureScale, Product
-from .forms import ClientForm, DishForm, ProductForm
+from .forms import ClientForm, DishForm, IngredientForm, ProductForm
 
 from .services.menu_maker import Menumaker
 
@@ -113,7 +115,7 @@ def add_new_product(request):
 
 class ProductUpdateView(UpdateView):
     model = Product
-    template_name = "product/new_product.html"
+    template_name = "product/new.html"
     form_class = ProductForm
 
 
@@ -158,3 +160,37 @@ def dish_detail(request, pk):
     data = {"dish": dish, "ingredients": ingredients}
 
     return render(request, "dish/details_view.html", data)
+
+
+# Ingredient section
+
+@login_required
+def add_new_ingredient(request, pk):
+    error = ''
+    if request.method == 'POST':
+        form = IngredientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('dish-detail', pk=form.cleaned_data['dish'].id, permanent=True)
+        else:
+            error = 'Форма была неверной'
+
+    form_class = IngredientForm({'dish': pk})
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "dish/ingredient.html", data)
+
+
+def delete_ingredient(request, pk):
+    query = Ingredient.objects.get(pk=pk)
+    dish_id = query.dish.id
+    query.delete()
+    return HttpResponseRedirect(reverse_lazy('dish-detail', kwargs={'pk': dish_id}))
+
+
+class IngredientUpdateView(UpdateView):
+    model = Ingredient
+    template_name = "dish/ingredient.html"
+    form_class = IngredientForm

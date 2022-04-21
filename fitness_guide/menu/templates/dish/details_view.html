@@ -12,10 +12,16 @@
     
     {% for ingredient in ingredients %}
     <ul class="list-group">
-        <li class="list-group-item">{{ ingredient.product }} - {{ ingredient.amount }} {{ ingredient.measure_scale.shortname }}</li>
+        <li class="list-group-item">
+            {{ ingredient.product }} - {{ ingredient.amount }} {{ ingredient.measure_scale.shortname }}  
+            <a href="{% url 'ingredient-update' ingredient.id %}" class="btn btn-warning">Изменить</a> 
+            <a href="{% url 'ingredient-delete' ingredient.id %}" class="btn btn-danger">Удалить</a> 
+        </li>
     </ul>
     {% endfor %}
     <br>
+
+    <a href="{% url 'ingredient-new' dish.id %}" class="btn btn-warning">Добавить ингредиент</a> <br> <br>
 
     <a href="{% url 'dish-main' %}" class="btn btn-primary">На главную</a>
 

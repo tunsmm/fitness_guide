@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Удаление блюда{% endblock %}
+{% block header %}Удаление блюда{% endblock %}
+{% block content %}
+
+    <h3>
+        Вы уверены, что хотите удалить блюда с id {{ dish.id }}, {{ dish.name }}?
+    </h3>
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger">Удалить данные о блюде</button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'dish-detail' dish.id %}" class="btn btn-warning">Обратно к блюду</a>
+    <a href="{% url 'dish-main' %}" class="btn btn-primary">На главную</a>
+
+{% endblock %}
