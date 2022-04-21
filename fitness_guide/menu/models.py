@@ -25,20 +25,6 @@ class Client(models.Model):
     def get_absolute_url(self):
         return f"/client/{self.id}"
 
-"""
-
-class Menu(models.Model):
-    comments = models.TextField(blank=True)
-
-
-class Day(models.Model):
-    comments = models.TextField(blank=True)
-
-
-class Meal(models.Model):
-    comments = models.TextField(blank=True)
-
-"""
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
@@ -56,6 +42,28 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return f"/product"
+
+
+class RestrictedProduct(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    score = models.CharField(max_length=1, default=1)
+
+    class Meta:
+        unique_together = (('client', 'product'),)
+        verbose_name = 'Запрещенный продукт'
+        verbose_name_plural = 'Запрещенные продукты'
+
+
+class LovedProduct(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    score = models.CharField(max_length=1, default=1)
+
+    class Meta:
+        unique_together = (('client', 'product'),)
+        verbose_name = 'Любимый продукт'
+        verbose_name_plural = 'Любимые продукты'
 
 
 class MeasureScale(models.Model):
@@ -89,7 +97,7 @@ class Dish(models.Model):
     class Meta:
         verbose_name = 'Блюдо'
         verbose_name_plural = 'Блюда'
-        
+
     def __str__(self):
         return self.name
 
@@ -108,68 +116,117 @@ class Ingredient(models.Model):
     def __str__(self):
         return f"{self.dish}-{self.product}"
 
-"""
 
-# This block contains models that have a primary key and a foreign key
+class Meal(models.Model):
+    NOT_SET = 'NS'
+    BREAKFAST = 'BF'
+    LUNCH = 'LN'
+    DINNER = 'DN'
+    SUPPER = 'SP'
+    SNACK = 'SN'
 
-class Template(models.Model):
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
-    type_diet = models.CharField(max_length=20)
+    TYPE_OF_MEALS = [
+        (NOT_SET, 'Не выбрано'),
+        (BREAKFAST, 'Завтрак'),
+        (LUNCH, 'Обед'),
+        (DINNER, 'Ужин'),
+        (SUPPER, 'SP'),
+        (SNACK, 'Перекус'),
+    ]
+
+    type_of_meal = models.CharField(
+        max_length=31,
+        choices=TYPE_OF_MEALS,
+        default=NOT_SET,
+    )
     comments = models.TextField(blank=True)
 
-
-# This block contains models in which the composite primary key
-
-class Result(models.Model):
     class Meta:
-        unique_together = (('client', 'template'),)
-
-    template = models.IntegerField()
-    client = models.IntegerField()
-    factor = models.IntegerField(default = 1)
+        verbose_name = 'Прием пищи'
+        verbose_name_plural = 'Приемы пищи'
 
 
-class RestrictedProduct(models.Model):
-    class Meta:
-        unique_together = (('client', 'product'),)
+class DishesOfMeal(models.Model):
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    comments = models.TextField(blank=True)
 
-    client = models.IntegerField()
-    product = models.IntegerField()
-    score = models.CharField(max_length=2, default=None)
-
-
-class LovedProduct(models.Model):
-    class Meta:
-        unique_together = (('client', 'product'),)
-
-    client = models.IntegerField()
-    product = models.IntegerField()
-    score = models.CharField(max_length=2, default=None)
-
-class DishesOfMeal:
     class Meta:
         unique_together = (('meal', 'dish'),)
+        verbose_name = 'Блюдо в приеме пищи'
+        verbose_name_plural = 'Блюда в приеме пищи'
 
-    dish = models.IntegerField()
-    meal = models.IntegerField()
+
+class Day(models.Model):
     comments = models.TextField(blank=True)
 
+    class Meta:
+        verbose_name = 'День'
+        verbose_name_plural = 'Дни'
 
-class MealsOfDay:
+
+class MealsOfDay(models.Model):
+    day = models.ForeignKey(Day, on_delete=models.CASCADE)
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    comments = models.TextField(blank=True)
+
     class Meta:
         unique_together = (('day', 'meal'),)
+        verbose_name = 'Прием пищи в день'
+        verbose_name_plural = 'Приемов пищи в день'
 
-    day = models.IntegerField()
-    meal = models.IntegerField()
+
+class Menu(models.Model):
     comments = models.TextField(blank=True)
 
+    class Meta:
+        verbose_name = 'Меню'
+        verbose_name_plural = 'Меню'
 
-class DaysOfMenu:
+
+class DaysOfMenu(models.Model):
+    day = models.ForeignKey(Day, on_delete=models.CASCADE)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    comments = models.TextField(blank=True)
+
     class Meta:
         unique_together = (('menu', 'day'),)
+        verbose_name = 'День в меню'
+        verbose_name_plural = 'Дни в меню'
 
-    day = models.IntegerField()
-    menu = models.IntegerField()
+
+class Template(models.Model):
+    NOT_SET = 'not_set'
+    LOSS = 'loss'
+    HEALTH = 'health'
+    GAIN = 'gain'
+
+    TYPE_OF_DIET = [
+        (NOT_SET, 'Не выбрано'),
+        (LOSS, 'Похудение'),
+        (HEALTH, 'Сбалансированное питание'),
+        (GAIN, 'Набор массы'),
+    ]
+
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    type_diet = models.CharField(
+        max_length=20,
+        choices=TYPE_OF_DIET,
+        default=NOT_SET
+    )
     comments = models.TextField(blank=True)
 
-"""
+    class Meta:
+        verbose_name = 'Шаблон'
+        verbose_name_plural = 'Шаблоны'
+
+
+class Result(models.Model):
+    template = models.ForeignKey(Template, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    factor = models.FloatField(default=1)
+
+    class Meta:
+        unique_together = (('client', 'template'),)
+        verbose_name = 'Шаблон для клиента'
+        verbose_name_plural = 'Шаблоны для клиентов'
