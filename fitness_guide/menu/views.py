@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect
-from django.views.generic import DetailView, UpdateView, DeleteView, ListView
+from django.views.generic import DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
 
-from .models import Client, Dish, Ingredient, Ingredient, MeasureScale, Product
+from .models import Client, Dish, Ingredient, Product
 from .forms import ClientForm, DishForm, IngredientForm, ProductForm
 
 from .services.menu_maker import Menumaker
@@ -129,7 +129,7 @@ class ProductDeleteView(DeleteView):
 
 @login_required
 def dish_main(request):
-    latest_dish = Dish.objects.order_by()[:6]
+    latest_dish = Dish.objects.order_by()[:10]
     return render(request, "dish/main.html", {"dishes": latest_dish})
 
 
@@ -160,6 +160,18 @@ def dish_detail(request, pk):
     data = {"dish": dish, "ingredients": ingredients}
 
     return render(request, "dish/details_view.html", data)
+
+
+class DishDeleteView(DeleteView):
+    model = Dish
+    success_url = "/dish"
+    template_name = "dish/delete.html"
+
+
+class DishUpdateView(UpdateView):
+    model = Dish
+    template_name = "dish/new.html"
+    form_class = DishForm
 
 
 # Ingredient section
