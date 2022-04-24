@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Страница приемов пищи{% endblock %}
+{% block header %}Последние добавленные приемы пиши на сайте{% endblock %}
+{% block content %}
+
+    <div class="card-columns">
+    {% for meal in meals %}
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">
+                Прием пищи с id {{ meal.id }}
+            </h3>
+            <p class="card-text">
+                Подходящий тип: {{ meal.get_type_of_meal_display }} <br>
+                Комментарий: {% if meal.comments %} {{ meal.comments }} {% else %} - {% endif %}
+            </p>
+            <a href="{% url 'meal-detail' meal.id %}" class="btn btn-info">Просмотреть прием пищи</a> <br> <br>
+            <a href="{% url 'meal-delete' meal.id %}" class="btn btn-danger">Удалить прием пищи</a>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+
+    <form action="{% url 'meal-new' %}">
+        <br>
+        <button class="btn btn-primary">
+            Добавить новый прием пищи
+        </button>
+    </form>
+
+{% endblock %}

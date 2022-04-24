@@ -128,9 +128,9 @@ class Meal(models.Model):
     TYPE_OF_MEALS = [
         (NOT_SET, 'Не выбрано'),
         (BREAKFAST, 'Завтрак'),
-        (LUNCH, 'Обед'),
-        (DINNER, 'Ужин'),
-        (SUPPER, 'SP'),
+        (LUNCH, 'Полдник'),
+        (DINNER, 'Обед'),
+        (SUPPER, 'Ужин'),
         (SNACK, 'Перекус'),
     ]
 
@@ -144,6 +144,9 @@ class Meal(models.Model):
     class Meta:
         verbose_name = 'Прием пищи'
         verbose_name_plural = 'Приемы пищи'
+
+    def __str__(self):
+        return f"{self.id} {self.get_type_of_meal_display()}"
 
 
 class DishesOfMeal(models.Model):

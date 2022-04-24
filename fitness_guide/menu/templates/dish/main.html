@@ -12,7 +12,7 @@
             </h3>
             <p class="card-text">
                 Рецепт: {{ dish.recipe }} <br>
-                Комментарий: {{ dish.comments }}
+                Комментарий: {% if dish.comments %} {{ dish.comments }} {% else %} - {% endif %}
             </p>
             <a href="{% url 'dish-detail' dish.id %}" class="btn btn-info">Просмотреть блюдо</a> <br> <br>
             <a href="{% url 'dish-delete' dish.id %}" class="btn btn-danger">Удалить блюдо</a>

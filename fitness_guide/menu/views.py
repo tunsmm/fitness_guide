@@ -1,14 +1,14 @@
-from django.shortcuts import render, redirect
+
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect
-from django.views.generic import DetailView, UpdateView, DeleteView
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-
-
-from .models import Client, Dish, Ingredient, Product
-from .forms import ClientForm, DishForm, IngredientForm, ProductForm
+from django.views.generic import DeleteView, DetailView, UpdateView
 
 from .services.menu_maker import Menumaker
+
+from .forms import ClientForm, DishForm, IngredientForm, MealForm, ProductForm
+from .models import Client, Dish, Ingredient, Meal, Product
 
 
 # Main section
@@ -45,7 +45,7 @@ def client_main(request):
 
 
 @login_required
-def add_new_client(request):
+def client_new(request):
     error = ''
     if request.method == 'POST':
         form = ClientForm(request.POST)
@@ -66,9 +66,7 @@ def add_new_client(request):
 @login_required
 def generate_menu(request, pk):
     client = Client.objects.get(id=pk)
-
     mm = Menumaker()
-
     human = {
             "type": client.type_diet,
             "eats_per_day": client.eats_per_day,
@@ -80,9 +78,8 @@ def generate_menu(request, pk):
             "height": client.height,
             "sex": client.sex,
             "sports": client.sport_on_week,
-            }
+    }
     generating_menu = mm.make_menu(human)
-
     return render(request, "menu/generate_menu.html", {"menu": generating_menu, "client": client})
 
 
@@ -95,7 +92,7 @@ def product_main(request):
 
 
 @login_required
-def add_new_product(request):
+def product_new(request):
     error = ''
     if request.method == 'POST':
         form = ProductForm(request.POST)
@@ -104,7 +101,6 @@ def add_new_product(request):
             return redirect('product-main')
         else:
             error = 'Форма была неверной'
-
     form_class = ProductForm
     data = {
         'form': form_class,
@@ -134,7 +130,7 @@ def dish_main(request):
 
 
 @login_required
-def add_new_dish(request):
+def dish_new(request):
     error = ''
     if request.method == 'POST':
         form = DishForm(request.POST)
@@ -177,7 +173,7 @@ class DishUpdateView(UpdateView):
 # Ingredient section
 
 @login_required
-def add_new_ingredient(request, pk):
+def ingredient_new(request, pk):
     error = ''
     if request.method == 'POST':
         form = IngredientForm(request.POST)
@@ -195,7 +191,8 @@ def add_new_ingredient(request, pk):
     return render(request, "dish/ingredient.html", data)
 
 
-def delete_ingredient(request, pk):
+@login_required
+def ingredient_delete(request, pk):
     query = Ingredient.objects.get(pk=pk)
     dish_id = query.dish.id
     query.delete()
@@ -206,3 +203,51 @@ class IngredientUpdateView(UpdateView):
     model = Ingredient
     template_name = "dish/ingredient.html"
     form_class = IngredientForm
+
+
+# Meal section
+
+@login_required
+def meal_main(request):
+    latest_meal = Meal.objects.order_by()[:10]
+    return render(request, "meal/main.html", {"meals": latest_meal})
+
+
+@login_required
+def meal_new(request):
+    error = ''
+    if request.method == 'POST':
+        form = MealForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('meal-main')
+        else:
+            error = 'Форма была неверной'
+
+    form_class = MealForm
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "meal/new.html", data)
+
+
+@login_required
+def meal_detail(request, pk):
+    meal = Meal.objects.get(pk=pk)
+
+    data = {"meal": meal, }
+
+    return render(request, "meal/details_view.html", data)
+
+
+class MealDeleteView(DeleteView):
+    model = Meal
+    success_url = "/meal"
+    template_name = "meal/delete.html"
+
+
+class MealUpdateView(UpdateView):
+    model = Meal
+    template_name = "meal/new.html"
+    form_class = MealForm

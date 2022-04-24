@@ -1,5 +1,5 @@
 from django.forms import ModelForm, TextInput, NumberInput
-from .models import Client, Dish, Ingredient, Product
+from .models import Client, Dish, Ingredient, Meal, Product
 
 
 class ClientForm(ModelForm):
@@ -60,6 +60,12 @@ class IngredientForm(ModelForm):
     class Meta:
         model = Ingredient
         fields = ("dish", "product", "measure_scale", "amount")
+
+
+class MealForm(ModelForm):
+    class Meta:
+        model = Meal
+        fields = ("type_of_meal", "comments", )
 
 
 class ProductForm(ModelForm):
