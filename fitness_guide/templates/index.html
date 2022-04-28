@@ -6,8 +6,12 @@
         Здесь вы можете выбрать нужный раздел сайта
     </h3>
 
-    <a href="{% url 'client-main' %}" class="btn btn-primary btn-lg" >Просмотреть клиентов</a>
-    <a href="{% url 'product-main' %}" class="btn btn-primary btn-lg" >Просмотреть продукты</a>
-    <a href="{% url 'dish-main' %}" class="btn btn-primary btn-lg" >Просмотреть блюда</a>
+    <a href="{% url 'client-main' %}" class="btn btn-primary btn-lg mt-2" >Просмотреть клиентов</a>
+    <a href="{% url 'product-main' %}" class="btn btn-success btn-lg mt-2" >Просмотреть продукты</a>
+    <a href="{% url 'dish-main' %}" class="btn btn-warning btn-lg mt-2" >Просмотреть блюда</a>
+    <a href="{% url 'meal-main' %}" class="btn btn-danger btn-lg mt-2" >Просмотреть приемы пищи</a>
+    <a href="{% url 'day-main' %}" class="btn btn-secondary btn-lg mt-2" >Просмотреть дни</a>
+    <a href="{% url 'menu-main' %}" class="btn btn-light btn-lg mt-2" >Просмотреть меню</a>
+    <a href="{% url 'template-main' %}" class="btn btn-dark btn-lg mt-2" >Просмотреть шаблоны меню</a>
 
 {% endblock %}
