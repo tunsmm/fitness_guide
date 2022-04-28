@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Удаление меню{% endblock %}
+{% block header %}Удаление меню{% endblock %}
+{% block content %}
+
+    <h3>
+        Вы уверены, что хотите удалить меню с id {{ dish.id }}, {{ dish.name }}?
+    </h3>
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger">Удалить данные о меню</button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'dish-detail' dish.id %}" class="btn btn-warning">Обратно к меню</a>
+    <a href="{% url 'dish-main' %}" class="btn btn-primary">На главную</a>
+
+{% endblock %}

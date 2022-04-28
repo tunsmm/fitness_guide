@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Подробнее о меню{% endblock %}
+{% block header %}Меню с id {{ menu.id }} {% endblock %}
+{% block content %}
+    <p>
+        Комментарий: {{ menu.comments }}
+    </p>
+
+    <a href="{% url 'menu-update' menu.id %}" class="btn btn-warning">Изменить меню</a> 
+    <hr>
+    <h3>Дни:</h3>
+    
+    {% for day_of_menu in days_of_menu %}
+    <ul class="list-group">
+        <li class="list-group-item">
+            {{ day_of_menu }}
+            <a href="{% url 'days-of-menu-update' day_of_menu.id %}" class="btn btn-warning">Изменить</a> 
+            <a href="{% url 'days-of-menu-delete' day_of_menu.id %}" class="btn btn-danger">Удалить</a> 
+        </li>
+    </ul>
+    {% endfor %}
+    <br>
+
+    <a href="{% url 'days-of-menu-new' menu.id %}" class="btn btn-warning">Добавить день</a> <br> <br>
+    
+    <a href="{% url 'menu-main' %}" class="btn btn-primary">На главную</a>
+
+{% endblock %}
