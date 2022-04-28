@@ -4,27 +4,26 @@
 {% block content %}
 
     <div class="card-columns">
-    {% for product in products %}
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title">
-                Наименование: {{ product.name }}
-            </h3>
-            <h4>
-                Характеристики продукта:
-            </h4>
-            <p class="card-text">
-                Калории - {{ product.calories }} <br>
-                Белки - {{ product.proteins }} <br>
-                Жиры - {{ product.fats}} <br>
-                Углеводы - {{ product.carbohydrates }} <br>
-            </p>
-            <a href="{% url 'product-update' product.id %}" class="btn btn-warning">Изменить данные</a>
-            <a href="{% url 'product-delete' product.id %}" class="btn btn-danger">Удалить продукт</a>
-            <hr>
+        {% for product in page %}
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">
+                    {{ product.name }}
+                </h3>
+                <h5>
+                    Характеристики продукта:
+                </h5>
+                <p class="card-text">
+                    Калории - {{ product.calories }} <br>
+                    Белки - {{ product.proteins }} <br>
+                    Жиры - {{ product.fats}} <br>
+                    Углеводы - {{ product.carbohydrates }} <br>
+                </p>
+                <a href="{% url 'product-update' product.id %}" class="btn btn-warning">Изменить данные</a>
+                <a href="{% url 'product-delete' product.id %}" class="btn btn-danger">Удалить продукт</a>
+            </div>
         </div>
-    </div>
-    {% endfor %}
+        {% endfor %}
     </div>
 
     <form action="{% url 'product-new' %}">
@@ -33,5 +32,11 @@
             Добавить новый продукт
         </button>
     </form>
+
+    <br>
+
+    {% if page.has_other_pages %}
+        {% include "paginator.html" with items=page paginator=paginator %}
+    {% endif %}
 
 {% endblock %}

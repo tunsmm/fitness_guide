@@ -7,6 +7,8 @@
         Рецепт: {{ dish.recipe }} <br>
         Комментарий: {{ dish.comments }}
     </p>
+
+    <a href="{% url 'dish-update' dish.id %}" class="btn btn-warning">Изменить блюдо</a> 
     <hr>
     <h3>Ингредиенты:</h3>
     
