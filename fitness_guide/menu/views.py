@@ -1,14 +1,14 @@
-
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, DetailView, UpdateView
 
+from .forms import ClientForm, DayForm, DaysOfMenuForm, DishForm, DishesOfMealForm, IngredientForm
+from .forms import MealForm, MealsOfDayForm, MenuForm, ProductForm, TemplateForm
+from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, Meal, MealsOfDay, Menu, Product, Template
 from .services.menu_maker import Menumaker
-
-from .forms import ClientForm, DishForm, IngredientForm, MealForm, ProductForm
-from .models import Client, Dish, Ingredient, Meal, Product
 
 
 # Main section
@@ -22,7 +22,7 @@ def index(request):
 
 class ClientDetailView(DetailView):
     model = Client
-    template_name = "client/details_view.html"
+    template_name = "client/detail.html"
     context_object_name = 'client'
 
 
@@ -68,16 +68,16 @@ def generate_menu(request, pk):
     client = Client.objects.get(id=pk)
     mm = Menumaker()
     human = {
-            "type": client.type_diet,
-            "eats_per_day": client.eats_per_day,
-            "no_eats_days": client.no_eats_days_per_week,
-            "restricted_products": [],
-            "loved_products": [],
-            "age": 20,
-            "weight": client.weight,
-            "height": client.height,
-            "sex": client.sex,
-            "sports": client.sport_on_week,
+        "type": client.type_diet,
+        "eats_per_day": client.eats_per_day,
+        "no_eats_days": client.no_eats_days_per_week,
+        "restricted_products": [],
+        "loved_products": [],
+        "age": 20,
+        "weight": client.weight,
+        "height": client.height,
+        "sex": client.sex,
+        "sports": client.sport_on_week,
     }
     generating_menu = mm.make_menu(human)
     return render(request, "menu/generate_menu.html", {"menu": generating_menu, "client": client})
@@ -87,8 +87,16 @@ def generate_menu(request, pk):
 
 @login_required
 def product_main(request):
-    latest_products = Product.objects.order_by()[:6]
-    return render(request, "product/main.html", {"products": latest_products})
+    latest_products = Product.objects.order_by("name").all()
+    paginator = Paginator(latest_products, 9)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    return render(
+        request, 
+        "product/main.html", 
+        #{"products": latest_products, }
+        {"page": page, "paginator": paginator}
+    )
 
 
 @login_required
@@ -139,7 +147,6 @@ def dish_new(request):
             return redirect('dish-main')
         else:
             error = 'Форма была неверной'
-
     form_class = DishForm
     data = {
         'form': form_class,
@@ -152,10 +159,8 @@ def dish_new(request):
 def dish_detail(request, pk):
     dish = Dish.objects.get(pk=pk)
     ingredients = Ingredient.objects.filter(dish=pk)
-
     data = {"dish": dish, "ingredients": ingredients}
-
-    return render(request, "dish/details_view.html", data)
+    return render(request, "dish/detail.html", data)
 
 
 class DishDeleteView(DeleteView):
@@ -182,7 +187,6 @@ def ingredient_new(request, pk):
             return redirect('dish-detail', pk=form.cleaned_data['dish'].id, permanent=True)
         else:
             error = 'Форма была неверной'
-
     form_class = IngredientForm({'dish': pk})
     data = {
         'form': form_class,
@@ -223,7 +227,6 @@ def meal_new(request):
             return redirect('meal-main')
         else:
             error = 'Форма была неверной'
-
     form_class = MealForm
     data = {
         'form': form_class,
@@ -235,10 +238,9 @@ def meal_new(request):
 @login_required
 def meal_detail(request, pk):
     meal = Meal.objects.get(pk=pk)
-
-    data = {"meal": meal, }
-
-    return render(request, "meal/details_view.html", data)
+    dishes_of_meal = DishesOfMeal.objects.filter(meal=pk)
+    data = {"meal": meal, "dishes_of_meal": dishes_of_meal, }
+    return render(request, "meal/detail.html", data)
 
 
 class MealDeleteView(DeleteView):
@@ -251,3 +253,242 @@ class MealUpdateView(UpdateView):
     model = Meal
     template_name = "meal/new.html"
     form_class = MealForm
+
+
+# DishesOfMeal section
+
+@login_required
+def dishes_of_meal_new(request, pk):
+    error = ''
+    if request.method == 'POST':
+        form = DishesOfMealForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('meal-detail', pk=form.cleaned_data['meal'].id, permanent=True)
+        else:
+            error = 'Форма была неверной'
+    form_class = DishesOfMealForm({'meal': pk})
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "meal/dish.html", data)
+
+
+@login_required
+def dishes_of_meal_delete(request, pk):
+    query = DishesOfMeal.objects.get(pk=pk)
+    meal_id = query.meal.id
+    query.delete()
+    return HttpResponseRedirect(reverse_lazy('meal-detail', kwargs={'pk': meal_id}))
+
+
+class DishesOfMealUpdateView(UpdateView):
+    model = DishesOfMeal
+    template_name = "meal/dish.html"
+    form_class = DishesOfMealForm
+
+
+# Day section
+
+@login_required
+def day_main(request):
+    latest_day = Day.objects.order_by()[:10]
+    return render(request, "day/main.html", {"days": latest_day})
+
+
+@login_required
+def day_new(request):
+    error = ''
+    if request.method == 'POST':
+        form = DayForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('day-main')
+        else:
+            error = 'Форма была неверной'
+    form_class = DayForm
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "day/new.html", data)
+
+
+@login_required
+def day_detail(request, pk):
+    day = Day.objects.get(pk=pk)
+    meals_of_day = MealsOfDay.objects.filter(day=pk)
+    data = { "day": day, "meals_of_day": meals_of_day, }
+    return render(request, "day/detail.html", data)
+
+
+class DayDeleteView(DeleteView):
+    model = Day
+    success_url = "/day"
+    template_name = "day/delete.html"
+
+
+class DayUpdateView(UpdateView):
+    model = Day
+    template_name = "day/new.html"
+    form_class = DayForm
+
+
+# MealsOfDay section
+
+@login_required
+def meals_of_day_new(request, pk):
+    error = ''
+    if request.method == 'POST':
+        form = MealsOfDayForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('day-detail', pk=form.cleaned_data['day'].id, permanent=True)
+        else:
+            error = 'Форма была неверной'
+    form_class = MealsOfDayForm({'day': pk})
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "day/meal.html", data)
+
+
+@login_required
+def meals_of_day_delete(request, pk):
+    query = MealsOfDay.objects.get(pk=pk)
+    day_id = query.day.id
+    query.delete()
+    return HttpResponseRedirect(reverse_lazy('day-detail', kwargs={'pk': day_id}))
+
+
+class MealsOfDayUpdateView(UpdateView):
+    model = MealsOfDay
+    template_name = "day/meal.html"
+    form_class = MealsOfDayForm
+
+
+# Menu section
+
+@login_required
+def menu_main(request):
+    latest_menu = Menu.objects.order_by()[:10]
+    return render(request, "menu/main.html", {"menus": latest_menu})
+
+
+@login_required
+def menu_new(request):
+    error = ''
+    if request.method == 'POST':
+        form = MenuForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('menu-main')
+        else:
+            error = 'Форма была неверной'
+    form_class = MenuForm
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "menu/new.html", data)
+
+
+@login_required
+def menu_detail(request, pk):
+    menu = Menu.objects.get(pk=pk)
+    days_of_menu = DaysOfMenu.objects.filter(menu=pk)
+    data = { "menu": menu, "days_of_menu": days_of_menu, }
+    return render(request, "menu/detail.html", data)
+
+
+class MenuDeleteView(DeleteView):
+    model = Menu
+    success_url = "/menu"
+    template_name = "menu/delete.html"
+
+
+class MenuUpdateView(UpdateView):
+    model = Menu
+    template_name = "menu/new.html"
+    form_class = MenuForm
+
+
+# DaysOfMenu section
+
+@login_required
+def days_of_menu_new(request, pk):
+    error = ''
+    if request.method == 'POST':
+        form = DaysOfMenuForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('menu-detail', pk=form.cleaned_data['menu'].id, permanent=True)
+        else:
+            error = 'Форма была неверной'
+    form_class = DaysOfMenuForm({'menu': pk})
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "menu/day.html", data)
+
+
+@login_required
+def days_of_menu_delete(request, pk):
+    query = DaysOfMenu.objects.get(pk=pk)
+    menu_id = query.menu.id
+    query.delete()
+    return HttpResponseRedirect(reverse_lazy('menu-detail', kwargs={'pk': menu_id}))
+
+
+class DaysOfMenuUpdateView(UpdateView):
+    model = DaysOfMenu
+    template_name = "menu/day.html"
+    form_class = DaysOfMenuForm
+
+
+# Template section
+
+@login_required
+def template_main(request):
+    latest_template = Template.objects.order_by()[:10]
+    return render(request, "template/main.html", {"templates": latest_template})
+
+
+@login_required
+def template_new(request):
+    error = ''
+    if request.method == 'POST':
+        form = TemplateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('template-main')
+        else:
+            error = 'Форма была неверной'
+    form_class = TemplateForm
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "template/new.html", data)
+
+
+@login_required
+def template_detail(request, pk):
+    template = Template.objects.get(pk=pk)
+    data = { "template": template, }
+    return render(request, "template/detail.html", data)
+
+
+class TemplateDeleteView(DeleteView):
+    model = Template
+    success_url = "/template"
+    template_name = "template/delete.html"
+
+
+class TemplateUpdateView(UpdateView):
+    model = Template
+    template_name = "template/new.html"
+    form_class = TemplateForm

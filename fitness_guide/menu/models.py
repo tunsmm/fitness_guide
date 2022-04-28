@@ -101,6 +101,9 @@ class Dish(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f"/dish/{self.id}"
+
 
 class Ingredient(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
@@ -115,6 +118,9 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return f"{self.dish}-{self.product}"
+
+    def get_absolute_url(self):
+        return f"/dish/{self.dish.id}"
 
 
 class Meal(models.Model):
@@ -148,6 +154,9 @@ class Meal(models.Model):
     def __str__(self):
         return f"{self.id} {self.get_type_of_meal_display()}"
 
+    def get_absolute_url(self):
+        return f"/meal/{self.id}"
+
 
 class DishesOfMeal(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
@@ -159,6 +168,12 @@ class DishesOfMeal(models.Model):
         verbose_name = 'Блюдо в приеме пищи'
         verbose_name_plural = 'Блюда в приеме пищи'
 
+    def __str__(self):
+        return f"{self.dish}-{self.meal}"
+
+    def get_absolute_url(self):
+        return f"/meal/{self.meal.id}"
+
 
 class Day(models.Model):
     comments = models.TextField(blank=True)
@@ -166,6 +181,12 @@ class Day(models.Model):
     class Meta:
         verbose_name = 'День'
         verbose_name_plural = 'Дни'
+
+    def __str__(self):
+        return f"День {self.id}"
+
+    def get_absolute_url(self):
+        return f"/day/{self.id}"
 
 
 class MealsOfDay(models.Model):
@@ -178,6 +199,12 @@ class MealsOfDay(models.Model):
         verbose_name = 'Прием пищи в день'
         verbose_name_plural = 'Приемов пищи в день'
 
+    def __str__(self):
+        return f"{self.meal}-{self.day}"
+
+    def get_absolute_url(self):
+        return f"/day/{self.day.id}"
+
 
 class Menu(models.Model):
     comments = models.TextField(blank=True)
@@ -185,6 +212,12 @@ class Menu(models.Model):
     class Meta:
         verbose_name = 'Меню'
         verbose_name_plural = 'Меню'
+
+    def __str__(self):
+        return f"Меню {self.id}"
+
+    def get_absolute_url(self):
+        return f"/menu/{self.id}"
 
 
 class DaysOfMenu(models.Model):
@@ -197,6 +230,12 @@ class DaysOfMenu(models.Model):
         verbose_name = 'День в меню'
         verbose_name_plural = 'Дни в меню'
 
+    def __str__(self):
+        return f"{self.day}-{self.menu}"
+
+    def get_absolute_url(self):
+        return f"/menu/{self.menu.id}"
+
 
 class Template(models.Model):
     NOT_SET = 'not_set'
@@ -204,7 +243,7 @@ class Template(models.Model):
     HEALTH = 'health'
     GAIN = 'gain'
 
-    TYPE_OF_DIET = [
+    TYPE_DIET = [
         (NOT_SET, 'Не выбрано'),
         (LOSS, 'Похудение'),
         (HEALTH, 'Сбалансированное питание'),
@@ -214,7 +253,7 @@ class Template(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     type_diet = models.CharField(
         max_length=20,
-        choices=TYPE_OF_DIET,
+        choices=TYPE_DIET,
         default=NOT_SET
     )
     comments = models.TextField(blank=True)
@@ -222,6 +261,12 @@ class Template(models.Model):
     class Meta:
         verbose_name = 'Шаблон'
         verbose_name_plural = 'Шаблоны'
+
+    def __str__(self):
+        return f"{self.id} {self.get_type_diet_display()}"
+
+    def get_absolute_url(self):
+        return f"/template/{self.id}"
 
 
 class Result(models.Model):
@@ -233,3 +278,9 @@ class Result(models.Model):
         unique_together = (('client', 'template'),)
         verbose_name = 'Шаблон для клиента'
         verbose_name_plural = 'Шаблоны для клиентов'
+
+    def __str__(self):
+        return f"{self.client.full_name} - {self.template}"
+
+    def get_absolute_url(self):
+        return f"/client/{self.client.id}"

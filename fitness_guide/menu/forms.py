@@ -1,5 +1,6 @@
-from django.forms import ModelForm, TextInput, NumberInput
-from .models import Client, Dish, Ingredient, Meal, Product
+from django.forms import ModelForm, NumberInput, TextInput
+
+from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, Meal, MealsOfDay, Menu, Product, Result, Template
 
 
 class ClientForm(ModelForm):
@@ -8,7 +9,6 @@ class ClientForm(ModelForm):
         fields = ("full_name", "sex", "height", "weight",
                   "sport_on_week", "no_eats_days_per_week",
                   "eats_per_day", "phone_number", "type_diet", )
-
         widgets = {
             "full_name": TextInput(attrs={
                 'placeholder': 'Иван Иванов'
@@ -37,11 +37,32 @@ class ClientForm(ModelForm):
         }
 
 
+class DayForm(ModelForm):
+    class Meta:
+        model = Day
+        fields = ("comments", )
+        widgets = {
+            "comments": TextInput(attrs={
+                'placeholder': 'Комментарии'
+            }),
+        }
+
+
+class DaysOfMenuForm(ModelForm):
+    class Meta:
+        model = DaysOfMenu
+        fields = ("menu", "day", "comments")
+        widgets = {
+            "comments": TextInput(attrs={
+                'placeholder': 'Комментарии'
+            }),
+        }
+
+
 class DishForm(ModelForm):
     class Meta:
         model = Dish
         fields = ("name", "recipe", "comments", )
-
         widgets = {
             "name": TextInput(attrs={
                 'placeholder': 'Название блюда',
@@ -56,23 +77,65 @@ class DishForm(ModelForm):
         }
 
 
+class DishesOfMealForm(ModelForm):
+    class Meta:
+        model = DishesOfMeal
+        fields = ("meal", "dish", "comments", )
+        widgets = {
+            "comments": TextInput(attrs={
+                'placeholder': 'Комментарии'
+            }),
+        }
+
+
 class IngredientForm(ModelForm):
     class Meta:
         model = Ingredient
         fields = ("dish", "product", "measure_scale", "amount")
+        widgets = {
+            "amount": NumberInput(attrs={
+                'placeholder': '1'
+            }),
+        }
 
 
 class MealForm(ModelForm):
     class Meta:
         model = Meal
         fields = ("type_of_meal", "comments", )
+        widgets = {
+            "comments": TextInput(attrs={
+                'placeholder': 'Комментарии'
+            }),
+        }
+
+
+class MealsOfDayForm(ModelForm):
+    class Meta:
+        model = MealsOfDay
+        fields = ("day", "meal", "comments", )
+        widgets = {
+            "comments": TextInput(attrs={
+                'placeholder': 'Комментарии'
+            }),
+        }
+
+
+class MenuForm(ModelForm):
+    class Meta:
+        model = Menu
+        fields = ("comments", )
+        widgets = {
+            "comments": TextInput(attrs={
+                'placeholder': 'Комментарии'
+            }),
+        }
 
 
 class ProductForm(ModelForm):
     class Meta:
         model = Product
         fields = ("name", "calories", "proteins", "fats", "carbohydrates")
-
         widgets = {
             "name": TextInput(attrs={
                 'placeholder': 'Наименование продукта'
@@ -88,5 +151,22 @@ class ProductForm(ModelForm):
             }),
             "carbohydrates": NumberInput(attrs={
                 'placeholder': '60'
+            }),
+        }
+
+
+class ResultForm(ModelForm):
+    class Meta:
+        model = Result
+        fields = ("client", "template", "factor")
+
+
+class TemplateForm(ModelForm):
+    class Meta:
+        model = Template
+        fields = ("type_diet", "menu", "comments", )
+        widgets = {
+            "comments": TextInput(attrs={
+                'placeholder': 'Комментарии'
             }),
         }
