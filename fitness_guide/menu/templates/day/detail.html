@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Подробнее о дне{% endblock %}
+{% block header %}День с id {{ day.id }} {% endblock %}
+{% block content %}
+    <p>
+        Комментарий: {{ day.comments }}
+    </p>
+
+    <a href="{% url 'day-update' day.id %}" class="btn btn-warning">Изменить день</a> 
+    <hr>
+    <h3>Приемы пищи:</h3>
+    
+    {% for meal_of_day in meals_of_day %}
+    <ul class="list-group">
+        <li class="list-group-item">
+            {{ meal_of_day }}
+            <a href="{% url 'meals-of-day-update' meal_of_day.id %}" class="btn btn-warning">Изменить</a> 
+            <a href="{% url 'meals-of-day-delete' meal_of_day.id %}" class="btn btn-danger">Удалить</a> 
+        </li>
+    </ul>
+    {% endfor %}
+    <br>
+
+    <a href="{% url 'meals-of-day-new' day.id %}" class="btn btn-warning">Добавить прием пищи</a> <br> <br>
+    
+    <a href="{% url 'day-main' %}" class="btn btn-primary">На главную</a>
+
+{% endblock %}

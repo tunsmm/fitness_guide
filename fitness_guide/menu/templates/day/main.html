@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Страница дней{% endblock %}
+{% block header %}Последние добавленные дни на сайте{% endblock %}
+{% block content %}
+
+    <div class="card-columns">
+    {% for day in days %}
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">
+                День с id {{ day.id }}
+            </h3>
+            <p class="card-text">
+                Комментарий: {% if day.comments %} {{ day.comments }} {% else %} - {% endif %}
+            </p>
+            <a href="{% url 'day-detail' day.id %}" class="btn btn-info">Просмотреть день</a> <br> <br>
+            <a href="{% url 'day-delete' day.id %}" class="btn btn-danger">Удалить день</a>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+
+    <form action="{% url 'day-new' %}">
+        <br>
+        <button class="btn btn-primary">
+            Добавить новый день
+        </button>
+    </form>
+
+{% endblock %}
