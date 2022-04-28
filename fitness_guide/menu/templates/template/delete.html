@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Удаление шаблона меню{% endblock %}
+{% block header %}Удаление шаблона меню{% endblock %}
+{% block content %}
+
+    <h3>
+        Вы уверены, что хотите удалить шаблон меню с id {{ template.id }}, {{ template.name }}?
+    </h3>
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger">Удалить данные о шаблоне меню</button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'template-detail' template.id %}" class="btn btn-warning">Обратно к шаблону меню</a>
+    <a href="{% url 'template-main' %}" class="btn btn-primary">На главную</a>
+
+{% endblock %}

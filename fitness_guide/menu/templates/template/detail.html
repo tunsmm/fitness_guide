@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Подробнее о шаблона меню{% endblock %}
+{% block header %}Шаблон с id {{ template.id }} {% endblock %}
+{% block content %}
+    <p>
+        Тип диеты: {{ template.type_diet }} <br>
+        Меню: {{ template.menu }} <br>
+        Комментарий: {{ template.comments }}
+    </p>
+
+    <a href="{% url 'template-update' template.id %}" class="btn btn-warning">Изменить шаблон меню</a> 
+    <a href="{% url 'template-delete' template.id %}" class="btn btn-danger">Удалить шаблон меню</a>
+    <hr>
+    <br>
+    
+    <a href="{% url 'template-main' %}" class="btn btn-primary">На главную</a>
+
+{% endblock %}
