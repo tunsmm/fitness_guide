@@ -3,11 +3,11 @@ from django.core.paginator import Paginator
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import DeleteView, DetailView, UpdateView
+from django.views.generic import DeleteView, UpdateView
 
-from .forms import ClientForm, DayForm, DaysOfMenuForm, DishForm, DishesOfMealForm, IngredientForm
+from .forms import ClientForm, DayForm, DaysOfMenuForm, DishForm, DishesOfMealForm, IngredientForm, LovedProductForm
 from .forms import MealForm, MealsOfDayForm, MenuForm, ProductForm, TemplateForm
-from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, Meal, MealsOfDay, Menu, Product, Template
+from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, LovedProduct, Meal, MealsOfDay, Menu, Product, RestrictedProduct, Template
 from .services.menu_maker import Menumaker
 
 
@@ -20,10 +20,14 @@ def index(request):
 
 # Client section
 
-class ClientDetailView(DetailView):
-    model = Client
-    template_name = "client/detail.html"
-    context_object_name = 'client'
+
+@login_required
+def client_detail(request, pk):
+    client = Client.objects.get(pk=pk)
+    loved_products = LovedProduct.objects.filter(client=pk)
+    restricted_products = RestrictedProduct.objects.filter(client=pk)
+    data = {"client": client, "loved_products": loved_products, "restricted_products": restricted_products}
+    return render(request, "client/detail.html", data)
 
 
 class ClientUpdateView(UpdateView):
@@ -46,19 +50,14 @@ def client_main(request):
 
 @login_required
 def client_new(request):
-    error = ''
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('client-main')
-        else:
-            error = 'Форма была неверной'
-
     form_class = ClientForm
     data = {
         'form': form_class,
-        'error': error
     }
     return render(request, "client/new.html", data)
 
@@ -83,6 +82,28 @@ def generate_menu(request, pk):
     return render(request, "menu/generate_menu.html", {"menu": generating_menu, "client": client})
 
 
+@login_required
+def loved_product_new(request, pk):
+    if request.method == 'POST':
+        form = LovedProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('client-detail', pk=form.cleaned_data['client'].id, permanent=True)
+    form_class = LovedProductForm({'client': pk})
+    data = {
+        'form': form_class,
+    }
+    return render(request, "client/loved_product.html", data)
+
+
+@login_required
+def loved_product_delete(request, pk):
+    query = LovedProduct.objects.get(pk=pk)
+    client_id = query.client.id
+    query.delete()
+    return HttpResponseRedirect(reverse_lazy('client-detail', kwargs={'pk': client_id}))
+
+
 # Product section
 
 @login_required
@@ -92,27 +113,22 @@ def product_main(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
-        request, 
-        "product/main.html", 
-        #{"products": latest_products, }
+        request,
+        "product/main.html",
         {"page": page, "paginator": paginator}
     )
 
 
 @login_required
 def product_new(request):
-    error = ''
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('product-main')
-        else:
-            error = 'Форма была неверной'
     form_class = ProductForm
     data = {
         'form': form_class,
-        'error': error
     }
     return render(request, "product/new.html", data)
 
@@ -139,18 +155,14 @@ def dish_main(request):
 
 @login_required
 def dish_new(request):
-    error = ''
     if request.method == 'POST':
         form = DishForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('dish-main')
-        else:
-            error = 'Форма была неверной'
     form_class = DishForm
     data = {
         'form': form_class,
-        'error': error
     }
     return render(request, "dish/new.html", data)
 
@@ -179,18 +191,15 @@ class DishUpdateView(UpdateView):
 
 @login_required
 def ingredient_new(request, pk):
-    error = ''
     if request.method == 'POST':
         form = IngredientForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('dish-detail', pk=form.cleaned_data['dish'].id, permanent=True)
-        else:
-            error = 'Форма была неверной'
     form_class = IngredientForm({'dish': pk})
     data = {
         'form': form_class,
-        'error': error
+        
     }
     return render(request, "dish/ingredient.html", data)
 
@@ -219,18 +228,15 @@ def meal_main(request):
 
 @login_required
 def meal_new(request):
-    error = ''
     if request.method == 'POST':
         form = MealForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('meal-main')
-        else:
-            error = 'Форма была неверной'
     form_class = MealForm
     data = {
         'form': form_class,
-        'error': error
+        
     }
     return render(request, "meal/new.html", data)
 
@@ -259,18 +265,15 @@ class MealUpdateView(UpdateView):
 
 @login_required
 def dishes_of_meal_new(request, pk):
-    error = ''
     if request.method == 'POST':
         form = DishesOfMealForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('meal-detail', pk=form.cleaned_data['meal'].id, permanent=True)
-        else:
-            error = 'Форма была неверной'
     form_class = DishesOfMealForm({'meal': pk})
     data = {
         'form': form_class,
-        'error': error
+        
     }
     return render(request, "meal/dish.html", data)
 
@@ -299,18 +302,15 @@ def day_main(request):
 
 @login_required
 def day_new(request):
-    error = ''
     if request.method == 'POST':
         form = DayForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('day-main')
-        else:
-            error = 'Форма была неверной'
     form_class = DayForm
     data = {
         'form': form_class,
-        'error': error
+        
     }
     return render(request, "day/new.html", data)
 
@@ -339,18 +339,15 @@ class DayUpdateView(UpdateView):
 
 @login_required
 def meals_of_day_new(request, pk):
-    error = ''
     if request.method == 'POST':
         form = MealsOfDayForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('day-detail', pk=form.cleaned_data['day'].id, permanent=True)
-        else:
-            error = 'Форма была неверной'
+            return redirect('day-detail', pk=form.cleaned_data['day'].id, permanent=True)            
     form_class = MealsOfDayForm({'day': pk})
     data = {
         'form': form_class,
-        'error': error
+        
     }
     return render(request, "day/meal.html", data)
 
@@ -379,18 +376,15 @@ def menu_main(request):
 
 @login_required
 def menu_new(request):
-    error = ''
     if request.method == 'POST':
         form = MenuForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('menu-main')
-        else:
-            error = 'Форма была неверной'
     form_class = MenuForm
     data = {
         'form': form_class,
-        'error': error
+        
     }
     return render(request, "menu/new.html", data)
 
@@ -419,18 +413,15 @@ class MenuUpdateView(UpdateView):
 
 @login_required
 def days_of_menu_new(request, pk):
-    error = ''
     if request.method == 'POST':
         form = DaysOfMenuForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('menu-detail', pk=form.cleaned_data['menu'].id, permanent=True)
-        else:
-            error = 'Форма была неверной'
     form_class = DaysOfMenuForm({'menu': pk})
     data = {
         'form': form_class,
-        'error': error
+        
     }
     return render(request, "menu/day.html", data)
 
@@ -459,18 +450,15 @@ def template_main(request):
 
 @login_required
 def template_new(request):
-    error = ''
     if request.method == 'POST':
         form = TemplateForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('template-main')
-        else:
-            error = 'Форма была неверной'
     form_class = TemplateForm
     data = {
         'form': form_class,
-        'error': error
+        
     }
     return render(request, "template/new.html", data)
 

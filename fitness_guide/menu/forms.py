@@ -1,6 +1,7 @@
 from django.forms import ModelForm, NumberInput, TextInput
 
-from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, Meal, MealsOfDay, Menu, Product, Result, Template
+from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, LovedProduct
+from .models import Meal, MealsOfDay, Menu, Product, RestrictedProduct, Result, Template
 
 
 class ClientForm(ModelForm):
@@ -97,6 +98,12 @@ class IngredientForm(ModelForm):
                 'placeholder': '1'
             }),
         }
+
+
+class LovedProductForm(ModelForm):
+    class Meta:
+        model = LovedProduct
+        fields = ("client", "product", "score")
 
 
 class MealForm(ModelForm):

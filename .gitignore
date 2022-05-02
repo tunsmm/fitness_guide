@@ -1,7 +1,7 @@
 # IDE configuration
 .idea
 .vscode
-.setup.cfg
+setup.cfg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

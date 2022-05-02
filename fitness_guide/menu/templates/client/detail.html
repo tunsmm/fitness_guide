@@ -19,6 +19,10 @@
         Вес - {{ client.weight }}
     </p>
 
+    <a href="{% url 'client-update' client.id %}" class="btn btn-warning mt-2 mb-2">Изменить данные</a>
+    <a href="{% url 'client-delete' client.id %}" class="btn btn-danger mt-2 mb-2">Удалить клиента</a>
+    <a href="{% url 'menu-generate' client.id %}" class="btn btn-success mt-2 mb-2">Сгенерировать меню</a> 
+
     <h4>
         Информация для меню
     </h4>
@@ -28,6 +32,27 @@
         Дней в неделю без соблюдения диеты {{ client.no_eats_days_per_week }} <br>
         Приемов пищи в день {{ client.eats_per_day }}
     </p>
+    <h4>
+        Предпочитаемые продукты
+    </h4>
+    <h5>
+        Любимые продукты
+    </h5>
+    <div class="card-columns">
+        {% for product in loved_products %}
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text">
+                    {{ product.product.name }}
+                    <a href="{% url 'loved-product-delete' product.id %}" class="btn btn-danger">Удалить</a>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'loved-product-new' client.id %}" class="btn btn-warning mb-2">Добавить любимый продукт</a>
+
+
 
     <h4>
         Информация о меню
@@ -42,10 +67,6 @@
     <p>
         Номер телефона: {{ client.phone_number }}
     </p>
-
-    <a href="{% url 'client-update' client.id %}" class="btn btn-warning">Изменить данные</a>
-    <a href="{% url 'client-delete' client.id %}" class="btn btn-danger">Удалить клиента</a>
-    <a href="{% url 'menu-generate' client.id %}" class="btn btn-success">Сгенерировать меню</a>
 
     <hr>
 
