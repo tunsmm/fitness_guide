@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
-import os  
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
 ]
 
 MIDDLEWARE = [
@@ -131,10 +133,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Login
 
 LOGIN_URL = "/auth/login/"
-LOGIN_REDIRECT_URL = "index" 
+LOGIN_REDIRECT_URL = "index"
 LOGOUT_REDIRECT_URL = "index"
 
 #  load engine filebased.EmailBackend
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 # specify the directory in which the files of letters will be added
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
+# Identificator current site
+SITE_ID = 1
