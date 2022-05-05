@@ -6,8 +6,9 @@ from django.urls import reverse_lazy
 from django.views.generic import DeleteView, UpdateView
 
 from .forms import ClientForm, DayForm, DaysOfMenuForm, DishForm, DishesOfMealForm, IngredientForm, LovedProductForm
-from .forms import MealForm, MealsOfDayForm, MenuForm, ProductForm, TemplateForm
-from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, LovedProduct, Meal, MealsOfDay, Menu, Product, RestrictedProduct, Template
+from .forms import MealForm, MealsOfDayForm, MenuForm, ProductForm, RestrictedProductForm, TemplateForm
+from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, LovedProduct
+from .models import Meal, MealsOfDay, Menu, Product, RestrictedProduct, Template
 from .services.menu_maker import Menumaker
 
 
@@ -19,6 +20,11 @@ def index(request):
 
 
 # Client section
+
+@login_required
+def client_main(request):
+    latest_clients = Client.objects.order_by('-phone_number')[:8]
+    return render(request, "client/main.html", {"clients": latest_clients})
 
 
 @login_required
@@ -40,12 +46,6 @@ class ClientDeleteView(DeleteView):
     model = Client
     success_url = "/"
     template_name = "client/delete.html"
-
-
-@login_required
-def client_main(request):
-    latest_clients = Client.objects.order_by('-phone_number')[:6]
-    return render(request, "client/main.html", {"clients": latest_clients})
 
 
 @login_required
@@ -84,14 +84,18 @@ def generate_menu(request, pk):
 
 @login_required
 def loved_product_new(request, pk):
+    error = ''
     if request.method == 'POST':
         form = LovedProductForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('client-detail', pk=form.cleaned_data['client'].id, permanent=True)
+        else:
+            error = form.non_field_errors
     form_class = LovedProductForm({'client': pk})
     data = {
         'form': form_class,
+        'error': error
     }
     return render(request, "client/loved_product.html", data)
 
@@ -99,6 +103,32 @@ def loved_product_new(request, pk):
 @login_required
 def loved_product_delete(request, pk):
     query = LovedProduct.objects.get(pk=pk)
+    client_id = query.client.id
+    query.delete()
+    return HttpResponseRedirect(reverse_lazy('client-detail', kwargs={'pk': client_id}))
+
+
+@login_required
+def restricted_product_new(request, pk):
+    error = ''
+    if request.method == 'POST':
+        form = RestrictedProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('client-detail', pk=form.cleaned_data['client'].id, permanent=True)
+        else:
+            error = form.non_field_errors
+    form_class = RestrictedProductForm({'client': pk})
+    data = {
+        'form': form_class,
+        'error': error
+    }
+    return render(request, "client/loved_product.html", data)
+
+
+@login_required
+def restricted_product_delete(request, pk):
+    query = RestrictedProduct.objects.get(pk=pk)
     client_id = query.client.id
     query.delete()
     return HttpResponseRedirect(reverse_lazy('client-detail', kwargs={'pk': client_id}))

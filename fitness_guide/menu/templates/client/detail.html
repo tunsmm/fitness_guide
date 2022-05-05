@@ -3,10 +3,7 @@
 {% block header %}Клиент с id {{ client.id }}, {{ client.full_name }}{% endblock %}
 {% block content %}
 
-    <h3>
-        Полное имя: {{ client.full_name }}
-    </h3>
-
+    <h3>Полное имя: {{ client.full_name }}</h3>
     <p>
         Пол - 
         {% if client.sex %}
@@ -19,39 +16,52 @@
         Вес - {{ client.weight }}
     </p>
 
-    <a href="{% url 'client-update' client.id %}" class="btn btn-warning mt-2 mb-2">Изменить данные</a>
-    <a href="{% url 'client-delete' client.id %}" class="btn btn-danger mt-2 mb-2">Удалить клиента</a>
-    <a href="{% url 'menu-generate' client.id %}" class="btn btn-success mt-2 mb-2">Сгенерировать меню</a> 
+    <a href="{% url 'client-update' client.id %}" class="btn btn-warning mb-2">Изменить данные</a>
+    <a href="{% url 'client-delete' client.id %}" class="btn btn-danger mb-2">Удалить клиента</a>
+    <a href="{% url 'menu-generate' client.id %}" class="btn btn-success mb-2">Сгенерировать меню</a> 
 
-    <h4>
-        Информация для меню
-    </h4>
+    <h4>Информация для меню</h4>
     <p>
         Цель диеты - {{ client.type_diet }} <br>
         Cпорта в неделю - {{ client.sport_on_week }} <br>
         Дней в неделю без соблюдения диеты {{ client.no_eats_days_per_week }} <br>
         Приемов пищи в день {{ client.eats_per_day }}
     </p>
-    <h4>
-        Предпочитаемые продукты
-    </h4>
-    <h5>
-        Любимые продукты
-    </h5>
-    <div class="card-columns">
-        {% for product in loved_products %}
-        <div class="card">
-            <div class="card-body">
-                <p class="card-text">
-                    {{ product.product.name }}
-                    <a href="{% url 'loved-product-delete' product.id %}" class="btn btn-danger">Удалить</a>
-                </p>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    <a href="{% url 'loved-product-new' client.id %}" class="btn btn-warning mb-2">Добавить любимый продукт</a>
 
+    <div>
+        <h4>Предпочитаемые продукты</h4>
+
+        <h5>Любимые продукты</h5>
+        <div class="card-columns">
+            {% for product in loved_products %}
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">
+                        {{ product.product.name }}
+                        <a href="{% url 'loved-product-delete' product.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                    </p>
+                    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'loved-product-new' client.id %}" class="btn btn-warning mt-2 mb-2">Добавить любимый продукт</a>
+
+        <h5>Запрещенные продукты</h5>
+        <div class="card-columns">
+            {% for product in restricted_products %}
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">
+                        {{ product.product.name }}
+                        <a href="{% url 'restricted-product-delete' product.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'restricted-product-new' client.id %}" class="btn btn-warning mt-2 mb-2">Добавить любимый продукт</a>
+    </div>
 
 
     <h4>

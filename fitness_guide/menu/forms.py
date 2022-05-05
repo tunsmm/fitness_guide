@@ -162,6 +162,12 @@ class ProductForm(ModelForm):
         }
 
 
+class RestrictedProductForm(ModelForm):
+    class Meta:
+        model = RestrictedProduct
+        fields = ("client", "product", "score")
+
+
 class ResultForm(ModelForm):
     class Meta:
         model = Result

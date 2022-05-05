@@ -13,6 +13,8 @@ urlpatterns = [
     path("client/<int:pk>/generate_menu", views.generate_menu, name="menu-generate"),
     path("client/<int:pk>/loved_product/new", views.loved_product_new, name="loved-product-new"),
     path("client/<int:pk>/loved_product/delete", views.loved_product_delete, name="loved-product-delete"),
+    path("client/<int:pk>/restricted_product/new", views.restricted_product_new, name="restricted-product-new"),
+    path("client/<int:pk>/restricted_product/delete", views.restricted_product_delete, name="restricted-product-delete"),
 
     path("product", views.product_main, name="product-main"),
     path("product/new", views.product_new, name="product-new"),

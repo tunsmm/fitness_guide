@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Добавление нового любимого блюда{% endblock %}
-{% block header %}Введите параметры любимого блюда{% endblock %}
+{% block title %}Добавление нового запрещенного продукта{% endblock %}
+{% block header %}Введите параметры запрещенного продукта{% endblock %}
 {% block content %}
 
     <p>
-        На этой странице вы можете добавить данные о новом любимом блюде для дальнейшей работы с ним.
+        На этой странице вы можете добавить данные о новом запрещенном продукте для дальнейшей работы с ним.
     </p>
     <div class="row justify-content-center">
         <div class="col-md-8 p-5">
             <div class="card">
-                <div class="card-header">Форма добавления любимого блюда</div>
+                <div class="card-header">Форма добавления запрещенного продукта</div>
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
@@ -28,7 +28,6 @@
                         </div>
                         {% endfor %}
 
-                        
                         <div class="bg-danger text-white">{{ error }} </div>
     
                         <div class="col-md-6 offset-md-4">              
