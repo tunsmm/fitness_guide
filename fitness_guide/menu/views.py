@@ -65,19 +65,21 @@ def client_new(request):
 @login_required
 def generate_menu(request, pk):
     client = Client.objects.get(id=pk)
-    mm = Menumaker()
+    loved_products = list(LovedProduct.objects.filter(client=pk))
+    restricted_products = list(RestrictedProduct.objects.filter(client=pk))
     human = {
         "type": client.type_diet,
         "eats_per_day": client.eats_per_day,
         "no_eats_days": client.no_eats_days_per_week,
-        "restricted_products": [],
-        "loved_products": [],
+        "restricted_products": restricted_products,
+        "loved_products": loved_products,
         "age": 20,
         "weight": client.weight,
         "height": client.height,
         "sex": client.sex,
         "sports": client.sport_on_week,
     }
+    mm = Menumaker()
     generating_menu = mm.make_menu(human)
     return render(request, "menu/generate_menu.html", {"menu": generating_menu, "client": client})
 
