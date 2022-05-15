@@ -103,8 +103,10 @@ class Menumaker:
 
             factor = (calory_factor + amino_factor*2)/1.9
 
-            best_menu['menu'][day[0]]['weight'] /= factor
-            best_menu['menu'][day[0]]['calories'] /= factor
-            best_menu['menu'][day[0]]['proteins'] /= factor
+            best_menu['menu'][day[0]]['weight'] = round(best_menu['menu'][day[0]]['weight'] / factor)
+            best_menu['menu'][day[0]]['calories'] = round(best_menu['menu'][day[0]]['calories'] / factor)
+            best_menu['menu'][day[0]]['proteins'] = round(best_menu['menu'][day[0]]['proteins'] / factor)
+            best_menu['menu'][day[0]]['fats'] = round(best_menu['menu'][day[0]]['proteins'] / factor)
+            best_menu['menu'][day[0]]['carbohydrates'] = round(best_menu['menu'][day[0]]['proteins'] / factor)
 
         return best_menu

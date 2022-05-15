@@ -57,7 +57,7 @@ class Criterial:
         if not list(filter(lambda x: x['id'] == newdata['id'], self.menu_list)):
             self.menu_list.append(newdata)
 
-    def pareto(self, type="health", epd=3, ned=1, restricted_prod=[], loved_prod=[]):
+    def pareto(self, restricted_prod: list, loved_prod: list, type="health", epd=3, ned=1):
         """Формирует Парето-оптимальный список шаблонов меню.
         Критерии:
         1) разница между фактическим и желаемым количеством приемов пищи (негативный) (epd)
@@ -68,45 +68,45 @@ class Criterial:
         1) тип диеты (general->type)
         2) аллергии (продукты из restricted_prod не содержатся в general->all_products)
         """
-        paretolist = self.menu_list.copy()
+        pareto_list = self.menu_list.copy()
         i = 0
-        while i < len(paretolist):
-            j = i+1
-            c_epd = abs(paretolist[i]['general']['eats_per_day'] - epd)
-            c_ned = abs(paretolist[i]['general']['no_eats_day'] - ned)
-            c_love = len(set(paretolist[i]['general']['all_products']) & set(loved_prod))
-            paretolist[i]['criterias'] = {
+        while i < len(pareto_list):
+            j = i + 1
+            c_epd = abs(pareto_list[i]['general']['eats_per_day'] - epd)
+            c_ned = abs(pareto_list[i]['general']['no_eats_day'] - ned)
+            c_love = len(set(pareto_list[i]['general']['all_products']) & set(loved_prod))
+            pareto_list[i]['criterias'] = {
                 'epd': c_epd,
                 'ned': c_ned,
                 'love': c_love
             }
             if (  # Ограничения
-                        (len(set(paretolist[i]['general']['all_products']) & set(restricted_prod)) != 0) or
-                        (paretolist[i]['general']['type'] != type)
-                ):
-                paretolist.pop(i)
+                    (len(set(pareto_list[i]['general']['all_products']) & set(restricted_prod)) != 0) or
+                    (pareto_list[i]['general']['type'] != type)
+            ):
+                pareto_list.pop(i)
                 continue
-            while j < len(paretolist):
+            while j < len(pareto_list):
                 if (
                     # Критерии
                     (
-                        (c_epd > abs(paretolist[j]['general']['eats_per_day'] - epd)) and
-                        (c_ned > abs(paretolist[j]['general']['no_eats_day'] - ned)) and
-                        (c_love < len(set(paretolist[j]['general']['all_products']) & set(loved_prod)))
+                        (c_epd > abs(pareto_list[j]['general']['eats_per_day'] - epd)) and
+                        (c_ned > abs(pareto_list[j]['general']['no_eats_day'] - ned)) and
+                        (c_love < len(set(pareto_list[j]['general']['all_products']) & set(loved_prod)))
                     )
                 ):
-                    paretolist.pop(i)
+                    pareto_list.pop(i)
                     i -= 1
                     break
                 j += 1
             i += 1
-        return paretolist
+        return pareto_list
 
-    def optimization(self, paretolist: list, weight=[1/3, 1/3, 1/3]):
+    def optimization(self, pareto_list: list, weight=[1 / 3, 1 / 3, 1 / 3]):
         """ Построение обобщенного критерия """
-        general_criteria = [0 for _ in paretolist]
-        for i, v in enumerate(paretolist):
-            general_criteria[i] = (paretolist[i]['criterias']['epd'] * weight[0] +
-                                   paretolist[i]['criterias']['ned'] * weight[1] +
-                                   paretolist[i]['criterias']['love'] * weight[2])
-        return paretolist[general_criteria.index(max(general_criteria))]
+        general_criteria = [0 for _ in pareto_list]
+        for i, v in enumerate(pareto_list):
+            general_criteria[i] = (pareto_list[i]['criterias']['epd'] * weight[0] +
+                                   pareto_list[i]['criterias']['ned'] * weight[1] +
+                                   pareto_list[i]['criterias']['love'] * weight[2])
+        return pareto_list[general_criteria.index(max(general_criteria))]
