@@ -36,6 +36,12 @@
         Дней в неделю без соблюдения диеты - {{ menu.general.no_eats_day }} <br>
         Приемов пищи в день - {{ menu.general.eats_per_day }} <br>
 
+        Среднее число калорий в неделю - {{ menu.menu.Monday.calories }} <br>
+        Среднее число белков в неделю - {{ menu.menu.Monday.proteins }} <br>
+        Среднее число жиров в неделю - {{ menu.menu.Monday.fats }} <br>
+        Среднее число углеводов в неделю - {{ menu.menu.Monday.carbohydrates }} <br>
+
+
         <h5> Все продукты в меню: </h5> 
         {% for field in menu.general.all_products %}
         <ul class="list-group">
