@@ -54,6 +54,9 @@ class RestrictedProduct(models.Model):
         verbose_name = 'Запрещенный продукт'
         verbose_name_plural = 'Запрещенные продукты'
 
+    def __str__(self):
+        return self.product.name
+
 
 class LovedProduct(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -64,6 +67,9 @@ class LovedProduct(models.Model):
         unique_together = (('client', 'product'),)
         verbose_name = 'Любимый продукт'
         verbose_name_plural = 'Любимые продукты'
+
+    def __str__(self):
+        return self.product.name
 
 
 class MeasureScale(models.Model):
@@ -87,6 +93,9 @@ class MeasureScaleCourse(models.Model):
         unique_together = (('ms_from', 'ms_to'),)
         verbose_name = 'Курс шкал'
         verbose_name_plural = 'Курсы шкал'
+
+    def __str__(self):
+        return f"{self.ms_from} to {self.ms_to}"
 
 
 class Dish(models.Model):
@@ -117,7 +126,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f"{self.dish}-{self.product}"
+        return f"{self.id}:{self.dish.name}-{self.product.name}"
 
     def get_absolute_url(self):
         return f"/dish/{self.dish.id}"
@@ -152,7 +161,7 @@ class Meal(models.Model):
         verbose_name_plural = 'Приемы пищи'
 
     def __str__(self):
-        return f"{self.id} {self.get_type_of_meal_display()}"
+        return f"{self.id}:{self.get_type_of_meal_display()}"
 
     def get_absolute_url(self):
         return f"/meal/{self.id}"
@@ -169,7 +178,7 @@ class DishesOfMeal(models.Model):
         verbose_name_plural = 'Блюда в приеме пищи'
 
     def __str__(self):
-        return f"{self.dish}-{self.meal}"
+        return f"{self.id}:{self.dish.name}-{self.meal}"
 
     def get_absolute_url(self):
         return f"/meal/{self.meal.id}"
@@ -200,7 +209,7 @@ class MealsOfDay(models.Model):
         verbose_name_plural = 'Приемов пищи в день'
 
     def __str__(self):
-        return f"{self.meal}-{self.day}"
+        return f"{self.id}:{self.meal}-{self.day}"
 
     def get_absolute_url(self):
         return f"/day/{self.day.id}"
@@ -231,7 +240,7 @@ class DaysOfMenu(models.Model):
         verbose_name_plural = 'Дни в меню'
 
     def __str__(self):
-        return f"{self.day}-{self.menu}"
+        return f"{self.id}:{self.day}-{self.menu}"
 
     def get_absolute_url(self):
         return f"/menu/{self.menu.id}"
@@ -263,7 +272,7 @@ class Template(models.Model):
         verbose_name_plural = 'Шаблоны'
 
     def __str__(self):
-        return f"{self.id} {self.get_type_diet_display()}"
+        return f"{self.id}:{self.get_type_diet_display()}"
 
     def get_absolute_url(self):
         return f"/template/{self.id}"
@@ -280,7 +289,7 @@ class Result(models.Model):
         verbose_name_plural = 'Шаблоны для клиентов'
 
     def __str__(self):
-        return f"{self.client.full_name} - {self.template}"
+        return f"{self.client.full_name}-{self.template}"
 
     def get_absolute_url(self):
         return f"/client/{self.client.id}"
