@@ -9,7 +9,8 @@ from .forms import ClientForm, DayForm, DaysOfMenuForm, DishForm, DishesOfMealFo
 from .forms import MealForm, MealsOfDayForm, MenuForm, ProductForm, RestrictedProductForm, TemplateForm
 from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, LovedProduct
 from .models import Meal, MealsOfDay, Menu, Product, RestrictedProduct, Template
-from .services.menu_maker import Menumaker
+from .services.menu_maker import Menumaker, Menumaker2
+from .services.menu_shower import menu_shower
 
 
 # Main section
@@ -19,11 +20,24 @@ def index(request):
     return render(request, "index.html")
 
 
+def page_not_found(request, exception):
+    return render(
+        request,
+        "misc/404.html",
+        {"path": request.path},
+        status=404
+    )
+
+
+def server_error(request):
+    return render(request, "misc/500.html", status=500)
+
+
 # Client section
 
 @login_required
 def client_main(request):
-    latest_clients = Client.objects.order_by('-phone_number')[:8]
+    latest_clients = Client.objects.order_by('-phone_number')[:20]
     return render(request, "client/main.html", {"clients": latest_clients})
 
 
@@ -81,7 +95,29 @@ def generate_menu(request, pk):
     }
     mm = Menumaker()
     generating_menu = mm.make_menu(human)
-    return render(request, "menu/generate_menu.html", {"menu": generating_menu, "client": client})
+    return render(request, "client/generate_menu.html", {"menu": generating_menu, "client": client})
+
+
+@login_required
+def generate_menu2(request, pk):
+    client = Client.objects.get(id=pk)
+    loved_products = list(LovedProduct.objects.filter(client=pk))
+    restricted_products = list(RestrictedProduct.objects.filter(client=pk))
+    human = {
+        "type": client.type_diet,
+        "eats_per_day": client.eats_per_day,
+        "no_eats_days": client.no_eats_days_per_week,
+        "restricted_products": restricted_products,
+        "loved_products": loved_products,
+        "age": 20,
+        "weight": client.weight,
+        "height": client.height,
+        "sex": client.sex,
+        "sports": client.sport_on_week,
+    }
+    mm = Menumaker2()
+    generating_menu = mm.make_menu(human)
+    return render(request, "client/generate_menu2.html", {"menu": generating_menu, "client": client})
 
 
 @login_required
@@ -181,7 +217,7 @@ class ProductDeleteView(DeleteView):
 
 @login_required
 def dish_main(request):
-    latest_dish = Dish.objects.order_by()[:10]
+    latest_dish = Dish.objects.order_by()[:30]
     return render(request, "dish/main.html", {"dishes": latest_dish})
 
 
@@ -231,7 +267,6 @@ def ingredient_new(request, pk):
     form_class = IngredientForm({'dish': pk})
     data = {
         'form': form_class,
-        
     }
     return render(request, "dish/ingredient.html", data)
 
@@ -254,7 +289,7 @@ class IngredientUpdateView(UpdateView):
 
 @login_required
 def meal_main(request):
-    latest_meal = Meal.objects.order_by()[:10]
+    latest_meal = Meal.objects.order_by()[:30]
     return render(request, "meal/main.html", {"meals": latest_meal})
 
 
@@ -268,7 +303,6 @@ def meal_new(request):
     form_class = MealForm
     data = {
         'form': form_class,
-        
     }
     return render(request, "meal/new.html", data)
 
@@ -305,7 +339,6 @@ def dishes_of_meal_new(request, pk):
     form_class = DishesOfMealForm({'meal': pk})
     data = {
         'form': form_class,
-        
     }
     return render(request, "meal/dish.html", data)
 
@@ -342,7 +375,6 @@ def day_new(request):
     form_class = DayForm
     data = {
         'form': form_class,
-        
     }
     return render(request, "day/new.html", data)
 
@@ -379,7 +411,6 @@ def meals_of_day_new(request, pk):
     form_class = MealsOfDayForm({'day': pk})
     data = {
         'form': form_class,
-        
     }
     return render(request, "day/meal.html", data)
 
@@ -416,16 +447,14 @@ def menu_new(request):
     form_class = MenuForm
     data = {
         'form': form_class,
-        
     }
     return render(request, "menu/new.html", data)
 
 
 @login_required
 def menu_detail(request, pk):
-    menu = Menu.objects.get(pk=pk)
-    days_of_menu = DaysOfMenu.objects.filter(menu=pk)
-    data = { "menu": menu, "days_of_menu": days_of_menu, }
+    menu = menu_shower(pk)
+    data = { "menu": menu}
     return render(request, "menu/detail.html", data)
 
 
