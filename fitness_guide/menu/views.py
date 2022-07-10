@@ -407,7 +407,7 @@ def meals_of_day_new(request, pk):
         form = MealsOfDayForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('day-detail', pk=form.cleaned_data['day'].id, permanent=True)            
+            return redirect('day-detail', pk=form.cleaned_data['day'].id, permanent=True)
     form_class = MealsOfDayForm({'day': pk})
     data = {
         'form': form_class,
@@ -482,7 +482,6 @@ def days_of_menu_new(request, pk):
     form_class = DaysOfMenuForm({'menu': pk})
     data = {
         'form': form_class,
-        
     }
     return render(request, "menu/day.html", data)
 
@@ -519,7 +518,6 @@ def template_new(request):
     form_class = TemplateForm
     data = {
         'form': form_class,
-        
     }
     return render(request, "template/new.html", data)
 
