@@ -5,12 +5,16 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
 
+    path("404", views.page_not_found, name="404"),
+    path("500", views.server_error, name="500"),
+
     path("client", views.client_main, name="client-main"),
     path("client/new", views.client_new, name="client-new"),
     path("client/<int:pk>", views.client_detail, name="client-detail"),
     path("client/<int:pk>/update", views.ClientUpdateView.as_view(), name="client-update"),
     path("client/<int:pk>/delete", views.ClientDeleteView.as_view(), name="client-delete"),
     path("client/<int:pk>/generate_menu", views.generate_menu, name="menu-generate"),
+    path("client/<int:pk>/generate_menu2", views.generate_menu2, name="menu-generate2"),
     path("client/<int:pk>/loved_product/new", views.loved_product_new, name="loved-product-new"),
     path("client/<int:pk>/loved_product/delete", views.loved_product_delete, name="loved-product-delete"),
     path("client/<int:pk>/restricted_product/new", views.restricted_product_new, name="restricted-product-new"),
