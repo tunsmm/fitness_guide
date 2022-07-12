@@ -9,7 +9,7 @@ from .forms import ClientForm, DayForm, DaysOfMenuForm, DishForm, DishesOfMealFo
 from .forms import MealForm, MealsOfDayForm, MenuForm, ProductForm, RestrictedProductForm, TemplateForm
 from .models import Client, Day, DaysOfMenu, Dish, DishesOfMeal, Ingredient, LovedProduct
 from .models import Meal, MealsOfDay, Menu, Product, RestrictedProduct, Template
-from .services.menu_maker import Menumaker, Menumaker2
+from .services.menu_maker import Menumaker2
 from .services.menu_shower import menu_shower
 
 
@@ -74,28 +74,6 @@ def client_new(request):
         'form': form_class,
     }
     return render(request, "client/new.html", data)
-
-
-@login_required
-def generate_menu(request, pk):
-    client = Client.objects.get(id=pk)
-    loved_products = list(LovedProduct.objects.filter(client=pk))
-    restricted_products = list(RestrictedProduct.objects.filter(client=pk))
-    human = {
-        "type": client.type_diet,
-        "eats_per_day": client.eats_per_day,
-        "no_eats_days": client.no_eats_days_per_week,
-        "restricted_products": restricted_products,
-        "loved_products": loved_products,
-        "age": 20,
-        "weight": client.weight,
-        "height": client.height,
-        "sex": client.sex,
-        "sports": client.sport_on_week,
-    }
-    mm = Menumaker()
-    generating_menu = mm.make_menu(human)
-    return render(request, "client/generate_menu.html", {"menu": generating_menu, "client": client})
 
 
 @login_required

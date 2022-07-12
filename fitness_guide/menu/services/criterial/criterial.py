@@ -1,10 +1,7 @@
-import json
-
-
-class Criterial:
+class Criterial2:
     """
     Модуль решения задачи многокритериальной оптимизации.
-    Задача: Требуется из списка шаблонов меню выбрать, используя параметры клиента, несколько оптимальных вариантов шаблонов меню.
+    Задача: Требуется из списка шаблонов меню выбрать, используя параметры клиента, оптимальныt варианты шаблонов меню.
 
     Модуль содержит класс, реализующий следующие методы:
     Загрузка списка шаблонов меню в формате JSON (см data_specification.md) с диска
@@ -28,34 +25,12 @@ class Criterial:
     должна быть реализована в виде соответствующей сущности Python так, чтобы невозможно было подставить значение,
     не определенное в коде, без ошибки.
     """
-
     def __init__(self):
         """Constructor"""
-        self.menu_list = []
-        self.filename = ''
+        self.menu_list = {}
 
-    def load(self, filename):
-        """ Загрузка списка шаблонов меню в формате JSON с диска """
-        self.filename = filename
-        with open(filename, "r", encoding='utf-8') as read_file:
-            self.menu_list = json.load(read_file)
-
-    def save(self, filename=None):
-        """ Сохранение шаблонов на диск """
-        filename = filename if filename else self.filename
-        with open(filename, "w") as write_file:
-            json.dump(self.menu_list, write_file)
-
-    def change(self, id=0, newdata={}):
-        """ Изменение существующего шаблона """
-        for i, v in enumerate(self.menu_list):
-            if v['id'] == id:
-                self.menu_list[i] = newdata
-
-    def append(self, newdata):
-        """ Добавление нового шаблона """
-        if not list(filter(lambda x: x['id'] == newdata['id'], self.menu_list)):
-            self.menu_list.append(newdata)
+    def set_menu_list(self, datad):
+        self.menu_list = datad
 
     def pareto(self, restricted_prod: list, loved_prod: list, type="health", epd=3, ned=1):
         """Формирует Парето-оптимальный список шаблонов меню.
@@ -105,8 +80,8 @@ class Criterial:
     def optimization(self, pareto_list: list, weight=[1 / 3, 1 / 3, 1 / 3]):
         """ Построение обобщенного критерия """
         general_criteria = [0 for _ in pareto_list]
-        for i, v in enumerate(pareto_list):
-            general_criteria[i] = (pareto_list[i]['criterias']['epd'] * weight[0] +
-                                   pareto_list[i]['criterias']['ned'] * weight[1] +
-                                   pareto_list[i]['criterias']['love'] * weight[2])
+        for index, menu in enumerate(pareto_list):
+            general_criteria[index] = ( menu['criterias']['epd'] * weight[0] +
+                                        menu['criterias']['ned'] * weight[1] +
+                                        menu['criterias']['love'] * weight[2])
         return pareto_list[general_criteria.index(max(general_criteria))]
