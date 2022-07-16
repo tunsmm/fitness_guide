@@ -2,7 +2,6 @@
 {% block title %}Подробнее о клиенте{% endblock %}
 {% block header %}Клиент с id {{ client.id }}, {{ client.full_name }}{% endblock %}
 {% block content %}
-
     <h3>Полное имя: {{ client.full_name }}</h3>
     <p>
         Пол - 
@@ -18,7 +17,7 @@
 
     <a href="{% url 'client-update' client.id %}" class="btn btn-warning mb-2">Изменить данные</a>
     <a href="{% url 'client-delete' client.id %}" class="btn btn-danger mb-2">Удалить клиента</a>
-    <a href="{% url 'menu-generate' client.id %}" class="btn btn-success mb-2">Сгенерировать меню</a> 
+    <a href="{% url 'menu-generate2' client.id %}" class="btn btn-success mb-2">Сгенерировать меню 2</a> 
 
     <h4>Информация для меню</h4>
     <p>
