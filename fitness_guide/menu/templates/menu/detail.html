@@ -8,21 +8,78 @@
 
     <a href="{% url 'menu-update' menu.id %}" class="btn btn-warning">Изменить меню</a> 
     <hr>
-    <h3>Дни:</h3>
-    
-    {% for day_of_menu in days_of_menu %}
-    <ul class="list-group">
-        <li class="list-group-item">
-            {{ day_of_menu }}
-            <a href="{% url 'days-of-menu-update' day_of_menu.id %}" class="btn btn-warning">Изменить</a> 
-            <a href="{% url 'days-of-menu-delete' day_of_menu.id %}" class="btn btn-danger">Удалить</a> 
-        </li>
-    </ul>
+    {{ menu }}
+    <br> <br> <br>
+    {% for day in menu.days %}
+        <h2>
+            {{ day.name }} (id {{ day.id }}) 
+            <a href="{% url 'day-update' day.id %}" class="btn btn-warning">Изменить день</a> 
+            <a href="{% url 'days-of-menu-delete' day.daysofmenu_id %}" class="btn btn-danger">Удалить день из меню</a> 
+        </h2> 
+        <p>
+            {% if day.comments %} Комментарий к дню: {{ day.comments }} {% endif %}
+            <ul class="list-group">
+            {% for meal in day.meals %}
+                <li class="list-group-item">
+                    <h3>
+                        Прием пищи: {{ meal.name }} (id {{ meal.id }})
+                        <a href="{% url 'meal-update' meal.id %}" class="btn btn-warning btn-sm">Изменить прием пищи</a> 
+                        <a href="{% url 'meals-of-day-delete' meal.id %}" class="btn btn-danger btn-sm">Удалить прием пищи из дня</a> 
+                    </h3>
+                    <p>
+                        {% if meal.comments %} Комментарий к приему пищи: {{ meal.comments }} {% endif %}
+                        <ul class="list-group">
+                        {% for dish in meal.dishes %}
+                            <li class="list-group-item">
+                                <h5>
+                                    Блюдо: {{ dish.name }} (id {{ dish.id }})
+                                    <a href="{% url 'dish-update' dish.id %}" class="btn btn-warning btn-sm">Изменить блюдо</a> 
+                                    <a href="{% url 'dishes-of-meal-delete' dish.id %}" class="btn btn-danger btn-sm">Удалить блюдо из приема пищи</a> 
+                                </h5>
+                                <p>
+                                    {% if dish.recipe %} Рецепт блюда: {{ dish.recipe }} {% endif %} 
+                                    {% if dish.comments %} <br> Комментарий к блюду: {{ dish.comments }} {% endif %}
+                                    <table class="table table-hover">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Название продукта</th>
+                                                <th>Количество</th>
+                                                <th>Шкала</th>
+                                                <th>Изменение</th>
+                                                <th>Удаление</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for ingredient in dish.ingredients %}
+                                            <tr>
+                                                <th scope="row">{{ ingredient.id }}</th>
+                                                <td> {{ ingredient.name }} </td>
+                                                <td> {{ ingredient.amount }} </td>
+                                                <td> {{ ingredient.measure_scale }} </td>
+                                                <td> <a href="{% url 'ingredient-update' ingredient.id %}" class="btn btn-warning btn-sm">Изменить ингредиент</a>  </td>
+                                                <td> <a href="{% url 'ingredient-delete' ingredient.id %}" class="btn btn-danger btn-sm">Удалить ингредиент</a>  </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <a href="{% url 'ingredient-new' dish.id %}" class="btn btn-success btn-sm">Добавить ингредиент</a>
+                                </p>
+                            </li>
+                        {% endfor %}
+                            <br> <a href="{% url 'dishes-of-meal-new' meal.id %}" class="btn btn-secondary">Добавить блюдо</a>
+                        </ul>
+                    </p>
+                </li>
+            {% endfor %}
+                <br> <a href="{% url 'meals-of-day-new' day.id %}" class="btn btn-success">Добавить прием пищи</a>
+            </ul>
+        </p>
+        <hr> <br>
     {% endfor %}
-    <br>
-
-    <a href="{% url 'days-of-menu-new' menu.id %}" class="btn btn-warning">Добавить день</a> <br> <br>
     
+    <a href="{% url 'days-of-menu-new' menu.id %}" class="btn btn-warning">Добавить день</a> 
+    <br> <br>    
     <a href="{% url 'menu-main' %}" class="btn btn-primary">На главную</a>
 
 {% endblock %}
